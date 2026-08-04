@@ -18,3 +18,7 @@ export './extensions/iterable.dart';
 export './extensions/map.dart';
 export './extensions/state.dart';
 export './extensions/platform.dart';
+export './extensions/object.dart';
+export './extensions/duration.dart';
+export './extensions/edge_insets.dart';
+export './extensions/form_validators.dart';

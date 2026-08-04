@@ -1,453 +1,387 @@
+<div align="center">
+
 # Extensions Core
 
-A collection of useful extensions for Dart and Flutter to streamline your development process.
+**A comprehensive, dependency-light collection of Dart & Flutter extensions.**
 
-## Features
+Stop hunting for separate extension packages — `extensions_core` covers the
+daily-driver utilities across strings, numbers, dates, collections, colors,
+widgets, navigation, and more in one place.
 
-### Alert
+![Dart](https://img.shields.io/badge/Dart-%5E3.6-blue)
+![Flutter](https://img.shields.io/badge/Flutter-%3E%3D3.27-blueviolet)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-- `showCusDialog(Widget dialog)`: Shows a custom dialog.
+---
 
-### BuildContext
+</div>
 
-- `screenWidth`: Gets the screen width.
-- `screenHeight`: Gets the screen height.
-- `screenSize`: Gets the screen size.
-- `viewInsets`: Gets the view insets.
-- `viewPadding`: Gets the view padding.
-- `theme`: Gets the `ThemeData`.
-- `textTheme`: Gets the `TextTheme`.
-- `colorScheme`: Gets the `ColorScheme`.
-- `primaryColor`: Gets the primary color.
-- `accentColor`: Gets the accent color.
-- `scaffoldBackgroundColor`: Gets the scaffold background color.
-- `iconTheme`: Gets the `IconThemeData`.
-- `isMobile`: Checks if the device is a mobile phone.
-- `isTablet`: Checks if the device is a tablet.
-- `isDesktop`: Checks if the device is a desktop.
+## Table of Contents
 
-### Color
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Extension Collections](#extension-collections)
+  - [Object](#object)
+  - [String](#string)
+  - [Number & Int](#number--int)
+  - [Double](#double)
+  - [DateTime](#datetime)
+  - [Duration](#duration)
+  - [Iterable](#iterable)
+  - [List](#list)
+  - [Map](#map)
+  - [Color](#color)
+  - [BuildContext](#buildcontext)
+  - [Widget](#widget)
+  - [TextStyle](#textstyle)
+  - [Icon](#icon)
+  - [Image](#image)
+  - [File](#file)
+  - [EdgeInsets](#edgeinsets)
+  - [State](#state)
+  - [Platform](#platform)
+  - [Navigation](#navigation)
+  - [Alert & Snackbar](#alert--snackbar)
+  - [Form Validators](#form-validators)
+- [Examples](#examples)
+- [Contributing](#contributing)
+- [License](#license)
 
-- `toHex()`: Converts a `Color` to a hex string.
-- `isDark`: Checks if a color is dark.
-- `isLight`: Checks if a color is light.
-- `blend(Color other, [double factor = 0.5])`: Blends the color with another color.
-
-### Date
-
-- `isToday()`: Checks if the `DateTime` is today.
-- `format(String pattern)`: Formats the `DateTime` to a string with the given pattern.
-- `formattedDate(BuildContext context, {String pattern = 'yyyy-MM-dd'})`: Get formatted date string based on locale from BuildContext.
-- `timeAgo(BuildContext context)`: Get relative time description (e.g., "5 minutes ago").
-- `isYesterday()`: Check if the DateTime is yesterday.
-- `isInFuture()`: Check if the DateTime is in the future.
-- `isInPast()`: Check if the DateTime is in the past.
-
-### Double
-
-- `toFixed(int fractionDigits)`: Formats a double to a fixed number of decimal places.
-- `lerp(double other, double t)`: Linearly interpolates between two doubles.
-
-### File
-
-- `sizeBytes`: Gets the file size in bytes.
-- `sizeFormatted()`: Gets the file size as a formatted string (e.g., "1.2 MB").
-
-### Icon
-
-- `withColor(Color color)`: Creates a new `Icon` with a different color.
-- `withSize(double size)`: Creates a new `Icon` with a different size.
-
-### Image
-
-- `toBase64()`: Converts an `Image` to a base64 string.
-- `withFilter(ColorFilter colorFilter)`: Applies a color filter to an `Image`.
-
-### Iterable
-
-- `firstWhereOrNull(bool Function(T) test)`: Finds the first element that satisfies a condition, or return `null`.
-- `sumBy(num Function(T) selector)`: Sums the values of a property of each element.
-- `averageBy(num Function(T) selector)`: Calculates the average of a property of each element.
-- `groupBy<K>(K Function(T) keySelector)`: Groups elements by a key.
-
-### List
-
-- `isNullOrEmpty()`: Checks if the list is null or empty.
-- `takeLast(int n)`: Returns the last `n` elements of the list.
-- `takeFirst(int n)`: Returns the first `n` elements of the list.
-- `chunked(int chunkSize)`: Splits the list into chunks of size `chunkSize`.
-- `reversedList()`: Returns a reversed copy of the list.
-- `distinct()`: Removes duplicate elements and returns a new list.
-- `whereNotNull()`: Removes all null values and returns a new list.
-- `shuffledList()`: Returns the list shuffled randomly.
-- `mapToList<R>(R Function(T item) transform)`: Maps elements to a new list with a given function `transform`.
-- `safeGet(int index)`: Returns a safe element at the given index or null if out of bounds.
-- `hasUniqueElements()`: Checks whether the list contains only unique elements.
-
-### Map
-
-- `getOrElse(K key, V defaultValue)`: Gets a value from a map, or a default value if the key doesn't exist.
-- `deepMerge(Map<K, V> other)`: Recursively merges two maps.
-- `where(bool Function(K key, V value) test)`: Filters a map based on a predicate.
-- `mapKeys<T>(T Function(K key) transform)`: Transforms the keys of a map.
-- `mapValues<T>(T Function(V value) transform)`: Transforms the values of a map.
-
-### Navigation
-
-- `navigateTo({required Widget screen, state, bool fade = false})`: Navigates to a new screen.
-- `navigateAndRestore({required Widget screen, onBack, bool fade = false})`: Navigates to a new screen and restores the previous screen when the new screen is popped.
-- `navigateToReplace({required Widget screen})`: Replaces the current screen with a new screen.
-- `navigateAndRemoveUntil({required Widget screen, bool fade = false})`: Navigates to a new screen and removes all the previous screens.
-- `navigateBack()`: Navigates back to the previous screen.
-- `pushScreen<T>(Widget screen)`: Navigate to a new screen.
-- `replaceScreen<T>(Widget screen)`: Replace the current screen.
-- `popUntilRoute(String routeName)`: Pop until a specific route name.
-- `clearStackAndShow(Widget screen)`: Clear the entire navigation stack and show a new screen.
-- `pushWithFade<T>(Widget screen)`: Push screen with fade transition.
-
-### Number
-
-- `toCurrency({String symbol = '\
+---
 
 ## Installation
 
-Add this to your `pubspec.yaml` file:
+Add the package to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  extensions_core: ^0.0.3
+  extensions_core: ^0.0.4
 ```
 
-Then run `flutter pub get`.
+Then run:
 
-## Usage
+```bash
+flutter pub get
+```
 
-Import the package:
+**Requirements:** Dart `^3.6.0` · Flutter `>=3.27.0`
+
+---
+
+## Quick Start
 
 ```dart
 import 'package:extensions_core/extensions.dart';
-```
 
-### Examples
+void main() {
+  // Strings
+  'hello world'.toCamelCase();      // helloWorld
+  'hello world'.toSnakeCase();      // hello_world
+  'user@site.com'.isEmail();        // true
 
-**Alert**
+  // Iterables
+  [1, 2, 3, 4].sum;                 // 10
+  [1, 2, 3].zip(['a', 'b']);        // [(1, a), (2, b)]
 
-```dart
-context.showCusDialog(
-  AlertDialog(
-    title: Text('Title'),
-    content: Text('This is a custom dialog.'),
-  ),
-);
-```
+  // Colors
+  colorFromHex('#2196f3').toHex();  // #ff2196f3
 
-**BuildContext**
-
-```dart
-// Get screen width
-final screenWidth = context.screenWidth;
-
-// Check if the device is a tablet
-if (context.isTablet) {
-  // ...
-}
-
-// Get the primary color from the theme
-final primaryColor = context.primaryColor;
-```
-
-**Color**
-
-```dart
-final hexColor = Colors.blue.toHex(); // #ff2196f3
-final isColorDark = Colors.black.isDark; // true
-final blendedColor = Colors.red.blend(Colors.blue);
-```
-
-**Date**
-
-```dart
-final now = DateTime.now();
-print(now.isToday()); // true
-print(now.format('dd/MM/yyyy'));
-print(now.timeAgo(context));
-```
-
-**Double**
-
-```dart
-final value = 3.14159;
-print(value.toFixed(2)); // 3.14
-
-final interpolated = 10.0.lerp(20.0, 0.5); // 15.0
-```
-
-**File**
-
-```dart
-final file = File('path/to/file.txt');
-print(file.sizeFormatted()); // e.g., "1.23 MB"
-```
-
-**Icon**
-
-```dart
-Icon(Icons.home).withColor(Colors.blue);
-Icon(Icons.settings).withSize(32.0);
-```
-
-**Image**
-
-```dart
-final image = Image.asset('assets/my_image.png');
-final base64String = await image.toBase64();
-image.withFilter(ColorFilter.mode(Colors.red, BlendMode.color));
-```
-
-**Iterable**
-
-```dart
-final numbers = [1, 2, 3, 4, 5];
-final evenNumber = numbers.firstWhereOrNull((x) => x.isEven); // 2
-
-final people = [Person('Alice', 25), Person('Bob', 30)];
-final totalAge = people.sumBy((p) => p.age); // 55
-final averageAge = people.averageBy((p) => p.age); // 27.5
-
-final groupedByAge = people.groupBy((p) => p.age);
-// { 25: [Person('Alice', 25)], 30: [Person('Bob', 30)] }
-```
-
-**List**
-
-```dart
-final list = [1, 2, 2, 3, 4, null];
-print(list.distinct()); // [1, 2, 3, 4, null]
-print(list.whereNotNull()); // [1, 2, 2, 3, 4]
-print(list.chunked(2)); // [[1, 2], [2, 3], [4, null]]
-```
-
-**Map**
-
-```dart
-final map = {'a': 1, 'b': 2};
-print(map.getOrElse('c', 3)); // 3
-
-final map1 = {'a': 1, 'b': {'c': 2}};
-final map2 = {'b': {'d': 3}, 'e': 4};
-print(map1.deepMerge(map2)); // {a: 1, b: {c: 2, d: 3}, e: 4}
-```
-
-**Navigation**
-
-```dart
-context.navigateTo(screen: DetailsScreen());
-context.navigateBack();
-```
-
-**Number**
-
-```dart
-print(1000.toCompact()); // 1K
-print(12345.67.toCurrency(symbol: '€')); // €12,345.67
-10.heightBox; // SizedBox(height: 10)
-```
-
-**Platform**
-
-```dart
-if (context.platform.isIOS) {
-  // Show Cupertino widgets
-} else if (context.platform.isAndroid) {
-  // Show Material widgets
+  // Dates
+  DateTime.now().startOfWeek;       // Monday
 }
 ```
 
-**Snackbar**
+---
+
+## Extension Collections
+
+### Object
+
+| Extension | Description |
+| --- | --- |
+| `let<R>(R Function(T))` | Pass `this` to a function, return its result. |
+| `also(void Function(T))` | Run a side effect, return `this`. |
+| `run<R>(R Function(T))` | Alias of `let`. |
+| `isNull` / `isNotNull` | Null checks on any nullable value. |
 
 ```dart
-context.showSnackBar('This is a message.');
+final length = 'hello'.let((s) => s.length); // 5
+String? maybe;
+maybe.isNull; // true
 ```
-
-**State**
-
-```dart
-class MyWidget extends StatefulWidget {
-  @override
-  _MyWidgetState createState() => _MyWidgetState();
-}
-
-class _MyWidgetState extends State<MyWidget> {
-  void updateSomething() {
-    // ... do something async
-    safeSetState(() {
-      // update state
-    });
-  }
-}
-```
-
-**String**
-
-```dart
-print('hello'.capitalize()); // Hello
-print('test@test.com'.isEmail()); // true
-```
-
-**TextStyle**
-
-```dart
-Text(
-  'Styled Text',
-  style: TextStyle().bold.color(Colors.red).size(24),
-  textAlign: TextStyle().align(),
-);
-```
-
-**Theme**
-
-```dart
-final isDark = context.isDarkMode;
-if (isDark) {
-  // ...
-}
-```
-
-**Widget**
-
-```dart
-Text('Hello').padding();
-Text('Click me').onTap(() => print('Tapped!'));
-Container().size(width: 100, height: 100);
-```, String locale = 'en_US'})`: Convert number to currency format.
-- `toCompact({String locale = 'en_US'})`: Convert number to compact format (e.g., 1K, 1M).
-- `toPercentage({int decimals = 0, String locale = 'en_US'})`: Convert number to percentage.
-- `toDecimal({int decimals = 2, String locale = 'en_US'})`: Format number with specific decimal places.
-- `milliseconds`, `seconds`, `minutes`, `hours`, `days`: Convert to `Duration`.
-- `heightBox`, `widthBox`: Convert to `SizedBox`.
-- `isBetween(num start, num end)`: Check if number is between a range.
-- `clamp(num min, num max)`: Ensure number is within a range.
-- `toRadians`, `toDegrees`: Convert to radians/degrees.
-
-### Platform
-
-- `platform`: Get platform info (`isAndroid`, `isIOS`, `isWeb`, etc.).
-- `targetPlatform`: Get target platform info (`isAndroid`, `isIOS`, etc.).
-
-### Snackbar
-
-- `showSnackBar(String message)`: Shows a snackbar with the given message.
-- `removeSnackBar()`: Removes the current snackbar.
-
-### State
-
-- `safeSetState(VoidCallback fn)`: Calls `setState` only if the widget is still mounted.
 
 ### String
 
-- `isEmail()`: Checks if the string is a valid email.
-- `capitalize()`: Capitalizes the first letter of the string.
-- `isNumeric()`: Returns true if the string contains only numeric characters.
-- `isUrl()`: Checks if the string is a valid URL.
-- `removeWhitespace()`: Removes all whitespace from the string.
-- `reverse()`: Returns a reversed version of the string.
-- `isNullOrWhiteSpace()`: Returns true if the string is null, empty, or contains only whitespace.
-- `truncate(int maxLength, {String ellipsis = '...'})`: Shortens the string to a specified length with an optional ellipsis.
-- `toTitleCase()`: Converts the string to Title Case.
-- `isAlphabetic()`: Checks if the string contains only alphabetic characters.
-- `containsUppercase()`: Checks if the string contains at least one uppercase letter.
-- `containsLowercase()`: Checks if the string contains at least one lowercase letter.
-- `containsDigit()`: Checks if the string contains at least one digit.
-- `isPhoneNumber()`: Checks if the string is a valid phone number (basic check).
+Validation: `isEmail` · `isUrl` · `isPhoneNumber` · `isNumeric` ·
+`isAlphabetic` · `isAlphanumeric` · `containsUppercase` ·
+`containsLowercase` · `containsDigit` · `containsSpecialCharacter` ·
+`isStrongPassword` · `isJson`
 
-### TextStyle
+Parsing: `toIntSafe` · `toDoubleSafe` · `toBool` · `isNullOrEmpty` (nullable) ·
+`isNullOrWhiteSpace`
 
-- `size(double value)`: Sets the font size.
-- `scaleSize(double factor)`: Scales the font size by a factor.
-- `weight(FontWeight value)`: Sets the font weight.
-- `bold`, `semiBold`, `light`, `medium`: Applies bold, semi-bold, light, or medium weight.
-- `color(Color value)`: Sets the font color.
-- `letterSpacing(double value)`: Sets the letter spacing.
-- `wordSpacing(double value)`: Sets the word spacing.
-- `italic`: Applies italic style.
-- `lineHeight(double value)`: Sets the line height (height factor).
-- `backgroundColor(Color value)`: Sets the background color.
-- `underline`, `lineThrough`, `overline`, `noDecoration`: Applies or removes text decorations.
-- `mergeWith(TextStyle? other)`: Combines two styles.
-- `fontFamily(String family)`: Sets a custom font family.
-- `withShadow(...)`: Sets text shadows.
-- `withShadows(List<Shadow> shadows)`: Applies multiple shadows.
-- `decorationThickness(double thickness)`: Adjusts text decoration thickness.
-- `glow(...)`: Adds multiple text shadows for a glow effect.
-- `responsiveSize(BuildContext context, double factor)`: Makes the font responsive based on screen width.
-- `outlined(...)`: Applies an outlined text style.
-- `align()`: Sets text alignment using `TextAlign`.
+Case: `capitalize` · `toTitleCase` · `toCamelCase` · `toPascalCase` ·
+`toSnakeCase` · `toKebabCase`
 
-### Theme
+Slicing: `truncate` · `reverse` · `removeWhitespace` · `collapseWhitespace` ·
+`before` · `after` · `between` · `replaceLast` · `countOccurrences` ·
+`initials` · `masked` · `onlyDigits` · `withoutDigits` · `slugify`
 
-- `isDarkMode`: Indicates whether the app is in dark mode.
-- `isLightMode`: Indicates whether the app is in light mode.
+```dart
+'john_smith'.toCamelCase();      // johnSmith
+'John Smith'.initials();         // JS
+'hello'.masked();                // *ello
+```
+
+### Number & Int
+
+Formatting: `toCurrency` · `toCompact` · `toPercentage` · `toDecimal` ·
+`formatBytes`
+
+Predicates: `isPositive` · `isZero` · `isDivisibleBy` · `percentageOf` ·
+`isEven` · `isOdd` (int)
+
+Conversions: `ordinal` (int) · `toBinary` · `toOctal` · `toHex` (int) ·
+`milliseconds`/`seconds`/`minutes`/`hours`/`days` → `Duration` ·
+`heightBox`/`widthBox` → `SizedBox` · `toRadians` · `toDegrees` ·
+`isBetween` · `clamp`
+
+```dart
+1.ordinal();              // 1st
+5.toBinary();             // 101
+1024.formatBytes();       // 1.00 KB
+10.heightBox;             // SizedBox(height: 10)
+12.minutes;               // Duration(minutes: 12)
+```
+
+### Double
+
+`toFixed(int fractionDigits)` · `lerp(other, t)`
+
+```dart
+3.14159.toFixed(2);              // 3.14
+10.0.lerp(20.0, 0.5);            // 15.0
+```
+
+### DateTime
+
+Checks: `isToday` · `isYesterday` · `isTomorrow` · `isSameDay` ·
+`isSameMonth` · `isSameYear` · `isBetween` · `isWeekend` · `isWeekday` ·
+`isLeapYear` · `isInFuture` · `isInPast`
+
+Boundaries: `startOfDay`/`endOfDay` · `startOfWeek`/`endOfWeek` ·
+`startOfMonth`/`endOfMonth` · `startOfYear`/`endOfYear` ·
+`tomorrow` · `yesterday`
+
+Helpers: `copyWith` · `ageInYears` · `quarter`
+Formatting: `format` · `formattedDate` · `timeAgo`
+
+```dart
+final now = DateTime.now();
+now.startOfMonth;          // 1st of the month
+now.ageInYears();          // whole years
+now.timeAgo(context);      // "5 minutes ago"
+```
+
+### Duration
+
+`inWeeks` · `format()`
+
+```dart
+const Duration(hours: 2, minutes: 3, seconds: 45).format(); // 2:03:45
+```
+
+### Iterable
+
+Selection: `firstWhereOrNull` · `distinctBy` · `countWhere` ·
+`containsAll` · `containsAny`
+
+Math (`Iterable<num>`): `sum` · `min` · `max` · `average`; plus `sumBy` ·
+`averageBy`
+
+Grouping/joining: `groupBy` · `insertBetween` · `zip` · `unzip` · `flatten`
+
+### List
+
+`isNullOrEmpty` · `takeLast` · `takeFirst` · `chunked` · `reversedList` ·
+`rotate` · `distinct` · `whereNotNull` · `shuffledList` · `mapToList` ·
+`safeGet` · `hasUniqueElements`
+
+```dart
+[1, 2, 3, 4, 5].rotate(2);   // [4, 5, 1, 2, 3]
+[1, 2, 3].chunked(2);        // [[1, 2], [3]]
+```
+
+### Map
+
+`getOrElse` · `getOrPut` · `deepMerge` · `merge` · `invert` · `where` ·
+`filterKeys` · `filterValues` · `mapKeys` · `mapValues` · `pick` · `omit` ·
+`keysOf`
+
+```dart
+{'a': 1, 'b': 2}.invert();               // {1: a, 2: b}
+{'a': 1, 'b': 2, 'c': 3}.pick(['a', 'c']); // {a: 1, c: 3}
+```
+
+### Color
+
+Conversion: `toHex` · `colorFromHex(String)` (top-level function)
+
+Shading: `darken` · `lighten` · `blend` · `inverse` · `complementary`
+
+Properties: `hue` · `saturation` · `brightness` · `withBrightness` ·
+`isDark` · `isLight` · `isTransparent` · `toMaterialColor`
+
+```dart
+colorFromHex('#f00').lighten(0.2);
+Colors.red.complementary;   // cyan
+Colors.red.toMaterialColor();
+```
+
+### BuildContext
+
+Media: `screenWidth` · `screenHeight` · `screenSize` · `viewInsets` ·
+`viewPadding` · `safePadding` · `mediaQuery` · `devicePixelRatio` ·
+`textScaler` · `orientation` · `isPortrait` · `isLandscape` · `hideKeyboard`
+
+Device/Theme: `isMobile` · `isTablet` · `isDesktop` · `theme` · `textTheme` ·
+`colorScheme` · `primaryColor` · `accentColor` · `scaffoldBackgroundColor` ·
+`iconTheme` · `locale` · `textDirection`
+
+```dart
+if (context.isTablet) { /* ... */ }
+context.hideKeyboard();
+```
 
 ### Widget
 
-- `padding([EdgeInsetsGeometry value = const EdgeInsets.all(16)])`: Wrap widget with padding.
-- `center`: Center widget.
-- `expanded`: Expand widget.
-- `flexible({int flex = 1})`: Flexible widget.
-- `onTap(VoidCallback action)`: Add gesture detector.
-- `align([AlignmentGeometry alignment = Alignment.center])`: Align widget.
-- `size({double? width, double? height})`: Wrap widget with SizedBox.
-- `opacity(double opacity)`: Add opacity to widget.
-- `circular([double radius = 8.0])`: Clip widget with circular border radius.
-- `elevated([double elevation = 4.0])`: Add card elevation.
+Layout: `padding` · `margin` · `background` · `border` · `center` ·
+`expanded` · `flexible` · `align` · `size` · `width` · `height` ·
+`constrained` · `aspectRatio`
 
-## Installation
+Interaction: `onTap` · `onLongPress` · `onDoubleTap` · `inkWell` · `tooltip`
 
-Add this to your `pubspec.yaml` file:
-
-```yaml
-dependencies:
-  extensions_core: ^0.0.3
-```
-
-Then run `flutter pub get`.
-
-## Usage
-
-Import the package:
+Effect: `opacity` · `visible` · `safeArea` · `circular` · `elevated` ·
+`blur` · `rotated` · `scaled`
 
 ```dart
-import 'package:extensions_core/extensions.dart';
+Text('Hello').padding().background(Colors.red).tooltip('hi');
+Text('Tap').inkWell(onTap);
 ```
 
-### Examples
+### TextStyle
 
-**String**
+`size` · `scaleSize` · `weight` · `bold` · `semiBold` · `light` · `medium` ·
+`color` · `letterSpacing` · `wordSpacing` · `italic` · `lineHeight` ·
+`backgroundColor` · `underline` · `lineThrough` · `overline` ·
+`noDecoration` · `decorationThickness` · `mergeWith` · `fontFamily` ·
+`withShadow` · `withShadows` · `glow` · `responsiveSize` · `outlined`
 
 ```dart
-String email = "test@example.com";
-print(email.isEmail()); // true
-
-String name = "john";
-print(name.capitalize()); // John
+TextStyle().bold.color(Colors.red).size(24);
 ```
 
-**Navigation**
+### Icon
+
+`withColor(Color)` · `withSize(double)`
+
+### Image
+
+`toBase64()` · `withFilter(ColorFilter)`
+
+### File
+
+`sizeBytes` · `sizeFormatted` · `sizeInMB` · `isImage` · `isVideo` ·
+`isAudio` · `readAsStringSafe`
 
 ```dart
-context.navigateTo(screen: MyScreen());
+File('photo.jpg').isImage;   // true
+file.sizeFormatted();        // "1.23 MB"
 ```
 
-**Widget**
+### EdgeInsets
+
+`copyWith({left, top, right, bottom})` — Flutter's `EdgeInsets` has none.
+
+### State
+
+`safeSetState(fn)` — calls `setState` only while the widget is mounted.
+
+### Platform
+
+On `BuildContext`: `platform` and `targetPlatform` expose `isAndroid`, `isIOS`,
+`isWeb`, `isMacOS`, `isWindows`, `isLinux`, `isFuchsia`.
+
+### Navigation
+
+Transitions: `navigateTo` · `navigateBack` · `navigateToReplace` ·
+`navigateAndRestore` · `navigateAndRemoveUntil` · `pushScreen` ·
+`pushWithFade` · `pushWithSlide` · `replaceScreen`
+
+Stack: `clearStackAndShow` · `popUntilRoute` · `popToFirst` · `canPop` ·
+`maybePop` · `popWithResult` · `currentRouteName`
+
+Presenters: `showSheet` · `showAppDialog`
 
 ```dart
-Text("Hello").padding();
-Text("World").center();
+context.pushWithSlide(DetailsScreen());
+context.canPop;
+context.showSheet(child);
 ```
 
-**Date**
+### Alert & Snackbar
+
+`showCusDialog(Widget)` · `showSnackBar(String)` · `removeSnackBar()`
+
+### Form Validators
+
+Composable `String? Function(String?)` validators, ready for `TextFormField`:
+
+`requiredField` · `emailValidator` · `phoneValidator` ·
+`minLengthValidator` · `maxLengthValidator`
 
 ```dart
-DateTime.now().isToday(); // true
-DateTime.now().format("yyyy-MM-dd");
-```1
+TextFormField(validator: emailValidator);
+```
+
+---
+
+## Examples
+
+A few pending UI recipes:
+
+```dart
+// Ripple button with padding and tooltip
+Text('Submit').inkWell(() => submit()).padding(EdgeInsets.all(12));
+
+// Slide-in navigation to a screen
+context.pushWithSlide(const ProfileScreen());
+
+// Form field with validation
+TextFormField(
+  controller: _email,
+  validator: emailValidator,
+  decoration: const InputDecoration(labelText: 'Email'),
+);
+```
+
+---
+
+## Contributing
+
+Contributions are welcome. To keep the package consistent:
+
+1. Extensions follow the Dart style guide and `flutter_lints`.
+2. New extensions should be added under `lib/extensions/` with a focused file
+   per type, then exported from `lib/extensions.dart`.
+3. Add tests in `test/` — run `flutter test` and `flutter analyze` before
+   submitting.
+4. Update this README and the `CHANGELOG.md` for user-visible changes.
+
+---
+
+## License
+
+[MIT](LICENSE)
+
+Copyright © Extensions Core contributors.

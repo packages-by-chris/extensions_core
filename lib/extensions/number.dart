@@ -55,4 +55,62 @@ extension NumExtension on num {
   /// Convert to radians/degrees
   double get toRadians => this * (pi / 180);
   double get toDegrees => this * (180 / pi);
+
+  // --- Predicates ---
+
+  /// Whether the number is greater than zero.
+  bool get isPositive => this > 0;
+
+  /// Whether the number equals zero.
+  bool get isZero => this == 0;
+
+  /// Whether the number divides evenly by [other].
+  bool isDivisibleBy(num other) => other != 0 && this % other == 0;
+
+  /// Percentage this number represents of [total] (0-100).
+  double percentageOf(num total) => total == 0 ? 0 : this / total * 100;
+
+  /// Human-readable byte size (e.g. `1.50 MB`).
+  String formatBytes({int decimals = 2}) {
+    const suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+    var v = toDouble();
+    var i = 0;
+    while (v >= 1024 && i < suffixes.length - 1) {
+      v /= 1024;
+      i++;
+    }
+    return '${v.toStringAsFixed(decimals)} ${suffixes[i]}';
+  }
+}
+
+extension IntExtensions on int {
+  /// Whether the int is even.
+  bool get isEven => this % 2 == 0;
+
+  /// Whether the int is odd.
+  bool get isOdd => this % 2 != 0;
+
+  /// Ordinal suffix (e.g. `1st`, `2nd`, `3rd`, `11th`).
+  String ordinal() {
+    if (this % 100 >= 11 && this % 100 <= 13) return '${this}th';
+    switch (this % 10) {
+      case 1:
+        return '${this}st';
+      case 2:
+        return '${this}nd';
+      case 3:
+        return '${this}rd';
+      default:
+        return '${this}th';
+    }
+  }
+
+  /// Binary representation (e.g. `5.toBinary()` -> `101`).
+  String toBinary() => toRadixString(2);
+
+  /// Octal representation.
+  String toOctal() => toRadixString(8);
+
+  /// Uppercase hexadecimal representation (e.g. `255.toHex()` -> `FF`).
+  String toHex() => toRadixString(16).toUpperCase();
 }

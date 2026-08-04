@@ -77,4 +77,61 @@ extension NavigationExtension on BuildContext {
       ),
     );
   }
+
+  /// Push screen sliding in from the right.
+  Future<T?> pushWithSlide<T>(Widget screen) {
+    return Navigator.push<T>(
+      this,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => screen,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          final offset =
+              Tween(begin: const Offset(1, 0), end: Offset.zero).animate(animation);
+          return SlideTransition(position: offset, child: child);
+        },
+      ),
+    );
+  }
+
+  /// Whether the navigator can pop.
+  bool get canPop => Navigator.of(this).canPop();
+
+  /// Pops if possible; otherwise does nothing.
+  void maybePop() => Navigator.of(this).maybePop();
+
+  /// Pops the current route with a [result].
+  void popWithResult<T>(T result) => Navigator.of(this).pop(result);
+
+  /// Pops until the first route on the stack.
+  void popToFirst() => Navigator.popUntil(this, (route) => route.isFirst);
+
+  /// Name of the current route, or `null` if unnamed.
+  String? get currentRouteName => ModalRoute.of(this)?.settings.name;
+
+  /// Shows a modal bottom sheet.
+  Future<T?> showSheet<T>(Widget child, {bool isScrollControlled = false}) {
+    return showModalBottomSheet<T>(
+      context: this,
+      isScrollControlled: isScrollControlled,
+      builder: (_) => child,
+    );
+  }
+
+  /// Shows a material [AlertDialog] with convenience params.
+  Future<T?> showAppDialog<T>({
+    required Widget content,
+    String? title,
+    List<Widget>? actions,
+    bool barrierDismissible = true,
+  }) {
+    return showDialog<T>(
+      context: this,
+      barrierDismissible: barrierDismissible,
+      builder: (_) => AlertDialog(
+        title: title == null ? null : Text(title),
+        content: content,
+        actions: actions,
+      ),
+    );
+  }
 }

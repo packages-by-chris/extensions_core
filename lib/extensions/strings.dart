@@ -1,3 +1,18 @@
+import 'dart:convert';
+
+/// String helpers that can also be used on `null` strings.
+extension NullableStringExtensions on String? {
+  /// Whether the string is null or empty.
+  bool get isNullOrEmpty => this == null || this!.isEmpty;
+}
+
+List<String> _wordParts(String s) => s
+    .replaceAllMapped(RegExp(r'([a-z0-9])([A-Z])'), (m) => '${m[1]} ${m[2]}')
+    .split(RegExp(r'[^a-zA-Z0-9]+'))
+    .where((w) => w.isNotEmpty)
+    .map((w) => w.toLowerCase())
+    .toList();
+
 extension StringExtensions on String {
   /// Checks if the string is a valid email.
   bool isEmail() {
@@ -76,5 +91,152 @@ extension StringExtensions on String {
   bool isPhoneNumber() {
     final phoneRegex = RegExp(r'^\+?[0-9]{7,15}$');
     return phoneRegex.hasMatch(this);
+  }
+
+  // --- Case conversion ---
+
+  /// Converts to `camelCase`.
+  String toCamelCase() {
+    final parts = _wordParts(this);
+    if (parts.isEmpty) return '';
+    final first = parts.first;
+    final rest = parts.skip(1).map((w) => w[0].toUpperCase() + w.substring(1));
+    return first + rest.join();
+  }
+
+  /// Converts to `snake_case`.
+  String toSnakeCase() => _wordParts(this).join('_');
+
+  /// Converts to `kebab-case`.
+  String toKebabCase() => _wordParts(this).join('-');
+
+  /// Converts to `PascalCase` (Title Case without spaces).
+  String toPascalCase() {
+    final parts = _wordParts(this);
+    return parts.map((w) => w[0].toUpperCase() + w.substring(1)).join();
+  }
+
+  // --- Safe parsing ---
+
+  /// Parses as `int`, or `null` if not a valid integer.
+  int? toIntSafe() => int.tryParse(trim());
+
+  /// Parses as `double`, or `null` if not a valid number.
+  double? toDoubleSafe() => double.tryParse(trim());
+
+  /// Parses boolean-ish strings: `true/yes/1/y` -> `true`, `false/no/0/n` -> `false`,
+  /// otherwise `null`.
+  bool? toBool() {
+    switch (trim().toLowerCase()) {
+      case 'true':
+      case 'yes':
+      case '1':
+      case 'y':
+        return true;
+      case 'false':
+      case 'no':
+      case '0':
+      case 'n':
+        return false;
+      default:
+        return null;
+    }
+  }
+
+  // --- Slicing ---
+
+  /// Part before the first occurrence of [delimiter], or the whole string if absent.
+  String before(String delimiter) {
+    final i = indexOf(delimiter);
+    return i == -1 ? this : substring(0, i);
+  }
+
+  /// Part after the first occurrence of [delimiter], or the whole string if absent.
+  String after(String delimiter) {
+    final i = indexOf(delimiter);
+    return i == -1 ? this : substring(i + delimiter.length);
+  }
+
+  /// Text between [start] and [end], or `null` if markers are missing or out of order.
+  String? between(String start, String end) {
+    final s = indexOf(start);
+    if (s == -1) return null;
+    final from = s + start.length;
+    final e = indexOf(end, from);
+    if (e == -1) return null;
+    return substring(from, e);
+  }
+
+  /// Replaces the last occurrence of [from] with [to].
+  String replaceLast(String from, String to) {
+    final i = lastIndexOf(from);
+    if (i == -1) return this;
+    return replaceRange(i, i + from.length, to);
+  }
+
+  // --- Counting / checks ---
+
+  /// Number of (non-overlapping) occurrences of [pattern].
+  int countOccurrences(String pattern) => pattern.allMatches(this).length;
+
+  /// Whether the string contains only letters and digits.
+  bool isAlphanumeric() => RegExp(r'^[a-zA-Z0-9]+$').hasMatch(this);
+
+  /// Whether the string contains at least one non-alphanumeric character.
+  bool containsSpecialCharacter() => contains(RegExp(r'[^a-zA-Z0-9\s]'));
+
+  /// Whether the string meets common password strength rules.
+  bool isStrongPassword(
+          {int minLength = 8,
+          bool requireUppercase = true,
+          bool requireLowercase = true,
+          bool requireDigit = true,
+          bool requireSpecial = true}) =>
+      length >= minLength &&
+      (!requireUppercase || containsUppercase()) &&
+      (!requireLowercase || containsLowercase()) &&
+      (!requireDigit || containsDigit()) &&
+      (!requireSpecial || containsSpecialCharacter());
+
+  /// Whether the string is valid JSON (object or array).
+  bool isJson() {
+    try {
+      final v = jsonDecode(this);
+      return v is Map || v is List;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  // --- Transformations ---
+
+  /// Lowercases, collapses whitespace and non-alphanumerics into single hyphens.
+  String slugify() =>
+      trim().toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '-').replaceAll(RegExp(r'^-+|-+$'), '');
+
+  /// Replaces runs of whitespace with a single space, trimming ends.
+  String collapseWhitespace() => trim().replaceAll(RegExp(r'\s+'), ' ');
+
+  /// Removes all digit characters.
+  String withoutDigits() => replaceAll(RegExp(r'\d'), '');
+
+  /// Keeps only digit characters.
+  String onlyDigits() => replaceAll(RegExp(r'[^0-9]'), '');
+
+  /// Masks all but the last [visibleCount] characters.
+  String masked({int visibleCount = 4, String mask = '*'}) {
+    if (length <= visibleCount) return this;
+    return mask * (length - visibleCount) + substring(length - visibleCount);
+  }
+
+  /// Uppercase initial letters (up to [max] words), useful for avatars.
+  String initials({int max = 2}) {
+    final words = _wordParts(this);
+    if (words.isEmpty) return '';
+    if (words.length == 1) {
+      final w = words.first;
+      return w.substring(0, w.length < max ? w.length : max).toUpperCase();
+    }
+    return words.take(max).map((w) => w[0].toUpperCase()).join();
   }
 }

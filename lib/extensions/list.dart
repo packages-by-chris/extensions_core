@@ -69,4 +69,13 @@ extension ListExtensions<T> on List<T> {
   bool hasUniqueElements() {
     return length == toSet().length;
   }
+
+  /// Rotates the list by [count] positions (negative rotates left).
+  List<T> rotate(int count) {
+    if (isEmpty) return [];
+    final n = count % length;
+    if (n == 0) return List.from(this);
+    if (n < 0) return rotate(n + length);
+    return [...sublist(length - n), ...sublist(0, length - n)];
+  }
 }
