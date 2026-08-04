@@ -8,7 +8,7 @@ extension PlatformExt on BuildContext {
   TargetPlatform get _targetPlatform => Theme.of(this).platform;
 
   /// Platform info
-  get platform => _Platform(
+  PlatformInfo get platform => PlatformInfo(
         isAndroid: !kIsWeb && Platform.isAndroid,
         isWeb: kIsWeb,
         isMacOS: !kIsWeb && Platform.isMacOS,
@@ -19,7 +19,7 @@ extension PlatformExt on BuildContext {
       );
 
   /// Target platform info
-  get targetPlatform => _TargetPlatform(
+  TargetPlatformInfo get targetPlatform => TargetPlatformInfo(
         isAndroid: _targetPlatform == TargetPlatform.android,
         isFuchsia: _targetPlatform == TargetPlatform.fuchsia,
         isIOS: _targetPlatform == TargetPlatform.iOS,
@@ -29,8 +29,8 @@ extension PlatformExt on BuildContext {
       );
 }
 
-class _Platform {
-  _Platform({
+class PlatformInfo {
+  const PlatformInfo({
     required this.isAndroid,
     required this.isMacOS,
     required this.isWindows,
@@ -62,8 +62,8 @@ class _Platform {
   final bool isLinux;
 }
 
-class _TargetPlatform {
-  _TargetPlatform({
+class TargetPlatformInfo {
+  const TargetPlatformInfo({
     required this.isAndroid,
     required this.isFuchsia,
     required this.isIOS,
