@@ -1,4 +1,3 @@
-
 extension IterableExtensions<T> on Iterable<T> {
   /// Finds the first element that satisfies a condition, or return `null`.
   T? firstWhereOrNull(bool Function(T) test) {

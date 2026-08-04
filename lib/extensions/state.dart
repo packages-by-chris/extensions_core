@@ -1,4 +1,3 @@
-
 import 'package:flutter/widgets.dart';
 
 extension StateExtensions<T extends StatefulWidget> on State<T> {

@@ -1,6 +1,3 @@
-
-
-
 extension DoubleExtensions on double {
   /// Formats a double to a fixed number of decimal places.
   double toFixed(int fractionDigits) {

@@ -132,8 +132,10 @@ void main() {
       expect(now.isSameDay(DateTime(2025, 6, 16)), isFalse);
       expect(now.isSameMonth(DateTime(2025, 6, 1)), isTrue);
       expect(now.isSameYear(DateTime(2025, 12, 31)), isTrue);
-      expect(DateTime(2025, 6, 15, 12).isBetween(now, DateTime(2025, 6, 16)), isTrue);
-      expect(DateTime(2025, 6, 17).isBetween(now, DateTime(2025, 6, 16)), isFalse);
+      expect(DateTime(2025, 6, 15, 12).isBetween(now, DateTime(2025, 6, 16)),
+          isTrue);
+      expect(
+          DateTime(2025, 6, 17).isBetween(now, DateTime(2025, 6, 16)), isFalse);
     });
 
     test('weekday/leap/quarter', () {
@@ -173,7 +175,8 @@ void main() {
   group('Duration', () {
     test('inWeeks/format', () {
       expect(const Duration(days: 14).inWeeks, 2);
-      expect(const Duration(hours: 2, minutes: 3, seconds: 45).format(), '2:03:45');
+      expect(const Duration(hours: 2, minutes: 3, seconds: 45).format(),
+          '2:03:45');
       expect(const Duration(seconds: 5).format(), '0:00:05');
     });
   });
@@ -190,7 +193,11 @@ void main() {
 
     test('distinctBy/countWhere/contains', () {
       expect(
-        [{'id': 1}, {'id': 1}, {'id': 2}].distinctBy((e) => e['id']).length,
+        [
+          {'id': 1},
+          {'id': 1},
+          {'id': 2}
+        ].distinctBy((e) => e['id']).length,
         2,
       );
       expect([1, 2, 3, 4].countWhere((x) => x.isEven), 2);
@@ -204,11 +211,13 @@ void main() {
       final (left, right) = [(1, 'a'), (2, 'b')].unzip();
       expect(left, [1, 2]);
       expect(right, ['a', 'b']);
-      expect([
-        [1, 2],
-        [3],
-        <int>[]
-      ].flatten(), [1, 2, 3]);
+      expect(
+          [
+            [1, 2],
+            [3],
+            <int>[]
+          ].flatten(),
+          [1, 2, 3]);
       expect([1, 2, 3].insertBetween(0), [1, 0, 2, 0, 3]);
     });
   });
@@ -278,7 +287,8 @@ void main() {
     test('copyWith', () {
       const e = EdgeInsets.fromLTRB(1, 2, 3, 4);
       expect(e.copyWith(left: 10), const EdgeInsets.fromLTRB(10, 2, 3, 4));
-      expect(e.copyWith(top: 20, bottom: 30), const EdgeInsets.fromLTRB(1, 20, 3, 30));
+      expect(e.copyWith(top: 20, bottom: 30),
+          const EdgeInsets.fromLTRB(1, 20, 3, 30));
       expect(e.copyWith(), e);
     });
   });
@@ -286,7 +296,8 @@ void main() {
   group('File', () {
     test('size helpers', () {
       final dir = Directory.systemTemp.createTempSync('fx_test');
-      final f = File('${dir.path}/photo.PNG')..writeAsBytesSync(List.filled(1024, 1));
+      final f = File('${dir.path}/photo.PNG')
+        ..writeAsBytesSync(List.filled(1024, 1));
       expect(f.isImage, isTrue);
       expect(f.isVideo, isFalse);
       expect(f.isAudio, isFalse);
@@ -341,7 +352,13 @@ void main() {
       await tester.pumpWidget(MaterialApp(
         home: Scaffold(
           body: Center(
-            child: Text('x').visible(true).blur(2).rotated(0.25).scaled(1.5).width(10).height(20),
+            child: Text('x')
+                .visible(true)
+                .blur(2)
+                .rotated(0.25)
+                .scaled(1.5)
+                .width(10)
+                .height(20),
           ),
         ),
       ));
@@ -361,7 +378,8 @@ void main() {
 
   group('Navigation', () {
     testWidgets('pushWithSlide and canPop', (tester) async {
-      await tester.pumpWidget(MaterialApp(home: const Scaffold(body: SizedBox())));
+      await tester
+          .pumpWidget(MaterialApp(home: const Scaffold(body: SizedBox())));
       final context = tester.element(find.byType(Scaffold));
       expect(context.canPop, isFalse);
       context.pushWithSlide(const Scaffold(body: Text('next')));
@@ -371,7 +389,8 @@ void main() {
     });
 
     testWidgets('showSheet', (tester) async {
-      await tester.pumpWidget(MaterialApp(home: const Scaffold(body: SizedBox())));
+      await tester
+          .pumpWidget(MaterialApp(home: const Scaffold(body: SizedBox())));
       tester.element(find.byType(Scaffold)).showSheet(const Text('sheet'));
       await tester.pumpAndSettle();
       expect(find.text('sheet'), findsOneWidget);

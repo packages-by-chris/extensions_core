@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:convert';
 
@@ -12,7 +11,8 @@ extension ImageExtensions on Image {
     final completer = Completer<String>();
     image.resolve(ImageConfiguration()).addListener(
       ImageStreamListener((info, _) async {
-        final byteData = await info.image.toByteData(format: ImageByteFormat.png);
+        final byteData =
+            await info.image.toByteData(format: ImageByteFormat.png);
         final buffer = byteData!.buffer.asUint8List();
         final base64 = base64Encode(buffer);
         completer.complete(base64);

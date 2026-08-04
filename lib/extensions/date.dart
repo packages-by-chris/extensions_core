@@ -58,7 +58,9 @@ extension DateTimeExtensions on DateTime {
   /// Check if the DateTime is tomorrow.
   bool isTomorrow() {
     final tomorrow = DateTime.now().add(const Duration(days: 1));
-    return year == tomorrow.year && month == tomorrow.month && day == tomorrow.day;
+    return year == tomorrow.year &&
+        month == tomorrow.month &&
+        day == tomorrow.day;
   }
 
   /// Whether it is the same calendar day as [other].
@@ -66,23 +68,25 @@ extension DateTimeExtensions on DateTime {
       year == other.year && month == other.month && day == other.day;
 
   /// Whether it is the same month (and year) as [other].
-  bool isSameMonth(DateTime other) => year == other.year && month == other.month;
+  bool isSameMonth(DateTime other) =>
+      year == other.year && month == other.month;
 
   /// Whether it is the same year as [other].
   bool isSameYear(DateTime other) => year == other.year;
 
   /// Whether the day is Saturday or Sunday.
-  bool get isWeekend => weekday == DateTime.saturday || weekday == DateTime.sunday;
+  bool get isWeekend =>
+      weekday == DateTime.saturday || weekday == DateTime.sunday;
 
   /// Whether the day is Monday-Friday.
   bool get isWeekday => !isWeekend;
 
   /// Whether the year is a leap year.
-  bool get isLeapYear =>
-      (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
+  bool get isLeapYear => (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
 
   /// Whether this date falls between [start] and [end] (inclusive).
-  bool isBetween(DateTime start, DateTime end) => !isBefore(start) && !isAfter(end);
+  bool isBetween(DateTime start, DateTime end) =>
+      !isBefore(start) && !isAfter(end);
 
   // --- Boundary helpers ---
 
@@ -96,14 +100,15 @@ extension DateTimeExtensions on DateTime {
   DateTime get startOfMonth => DateTime(year, month, 1);
 
   /// Last day of the month, end of day.
-  DateTime get endOfMonth =>
-      DateTime(year, month + 1, 0, 23, 59, 59, 999);
+  DateTime get endOfMonth => DateTime(year, month + 1, 0, 23, 59, 59, 999);
 
   /// Monday of the current week (start of day).
-  DateTime get startOfWeek => DateTime(year, month, day - (weekday - DateTime.monday));
+  DateTime get startOfWeek =>
+      DateTime(year, month, day - (weekday - DateTime.monday));
 
   /// Sunday of the current week, end of day.
-  DateTime get endOfWeek => startOfWeek.add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59, milliseconds: 999));
+  DateTime get endOfWeek => startOfWeek.add(const Duration(
+      days: 6, hours: 23, minutes: 59, seconds: 59, milliseconds: 999));
 
   /// Start of day (00:00:00.000).
   DateTime get startOfDay => DateTime(year, month, day);

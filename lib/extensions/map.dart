@@ -1,4 +1,3 @@
-
 extension MapExtensions<K, V> on Map<K, V> {
   /// Gets a value from a map, or a default value if the key doesn't exist.
   V getOrElse(K key, V defaultValue) {
@@ -74,14 +73,18 @@ extension MapExtensions<K, V> on Map<K, V> {
   }
 
   /// Keeps entries whose key matches [test].
-  Map<K, V> filterKeys(bool Function(K key) test) => where((key, value) => test(key));
+  Map<K, V> filterKeys(bool Function(K key) test) =>
+      where((key, value) => test(key));
 
   /// Keeps entries whose value matches [test].
-  Map<K, V> filterValues(bool Function(V value) test) => where((key, value) => test(value));
+  Map<K, V> filterValues(bool Function(V value) test) =>
+      where((key, value) => test(value));
 
   /// Keys whose value equals [value].
-  List<K> keysOf(V value) =>
-      [for (final entry in entries) if (entry.value == value) entry.key];
+  List<K> keysOf(V value) => [
+        for (final entry in entries)
+          if (entry.value == value) entry.key
+      ];
 
   /// Shallow merge with [other] (other wins on key conflicts).
   Map<K, V> merge(Map<K, V> other) => {...this, ...other};

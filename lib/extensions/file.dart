@@ -1,4 +1,3 @@
-
 import 'dart:io';
 import 'dart:math';
 
@@ -21,13 +20,24 @@ extension FileExtensions on File {
   }
 
   /// Whether the file extension is a common image type.
-  bool get isImage => const ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'heic', 'svg'].contains(_ext);
+  bool get isImage => const [
+        'jpg',
+        'jpeg',
+        'png',
+        'gif',
+        'webp',
+        'bmp',
+        'heic',
+        'svg'
+      ].contains(_ext);
 
   /// Whether the file extension is a common video type.
-  bool get isVideo => const ['mp4', 'mkv', 'avi', 'mov', 'webm', 'm4v'].contains(_ext);
+  bool get isVideo =>
+      const ['mp4', 'mkv', 'avi', 'mov', 'webm', 'm4v'].contains(_ext);
 
   /// Whether the file extension is a common audio type.
-  bool get isAudio => const ['mp3', 'wav', 'aac', 'flac', 'ogg', 'm4a'].contains(_ext);
+  bool get isAudio =>
+      const ['mp3', 'wav', 'aac', 'flac', 'ogg', 'm4a'].contains(_ext);
 
   /// File size in megabytes.
   double get sizeInMB => sizeBytes / (1024 * 1024);

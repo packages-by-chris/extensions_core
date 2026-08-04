@@ -211,8 +211,10 @@ extension StringExtensions on String {
   // --- Transformations ---
 
   /// Lowercases, collapses whitespace and non-alphanumerics into single hyphens.
-  String slugify() =>
-      trim().toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '-').replaceAll(RegExp(r'^-+|-+$'), '');
+  String slugify() => trim()
+      .toLowerCase()
+      .replaceAll(RegExp(r'[^a-z0-9]+'), '-')
+      .replaceAll(RegExp(r'^-+|-+$'), '');
 
   /// Replaces runs of whitespace with a single space, trimming ends.
   String collapseWhitespace() => trim().replaceAll(RegExp(r'\s+'), ' ');

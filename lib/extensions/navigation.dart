@@ -85,8 +85,8 @@ extension NavigationExtension on BuildContext {
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => screen,
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          final offset =
-              Tween(begin: const Offset(1, 0), end: Offset.zero).animate(animation);
+          final offset = Tween(begin: const Offset(1, 0), end: Offset.zero)
+              .animate(animation);
           return SlideTransition(position: offset, child: child);
         },
       ),

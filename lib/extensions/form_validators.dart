@@ -5,17 +5,20 @@ import 'strings.dart';
 typedef FormValidator = String? Function(String?);
 
 /// Field must not be null/blank.
-String? requiredField(String? value, {String message = 'This field is required'}) =>
+String? requiredField(String? value,
+        {String message = 'This field is required'}) =>
     (value == null || value.trim().isEmpty) ? message : null;
 
 /// Field must be a valid email (blank passes).
-String? emailValidator(String? value, {String message = 'Enter a valid email'}) {
+String? emailValidator(String? value,
+    {String message = 'Enter a valid email'}) {
   if (value == null || value.trim().isEmpty) return null;
   return value.isEmail() ? null : message;
 }
 
 /// Field must be a valid phone number (blank passes).
-String? phoneValidator(String? value, {String message = 'Enter a valid phone number'}) {
+String? phoneValidator(String? value,
+    {String message = 'Enter a valid phone number'}) {
   if (value == null || value.trim().isEmpty) return null;
   return value.isPhoneNumber() ? null : message;
 }

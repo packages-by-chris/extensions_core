@@ -66,8 +66,8 @@ extension ColorExtensions on Color {
     final r = (argb >> 16) & 0xff;
     final g = (argb >> 8) & 0xff;
     final b = argb & 0xff;
-    Color shade(double f) => Color.fromARGB(
-        255, (r * f).round().clamp(0, 255), (g * f).round().clamp(0, 255), (b * f).round().clamp(0, 255));
+    Color shade(double f) => Color.fromARGB(255, (r * f).round().clamp(0, 255),
+        (g * f).round().clamp(0, 255), (b * f).round().clamp(0, 255));
     return MaterialColor(argb, <int, Color>{
       50: shade(0.1),
       100: shade(0.2),

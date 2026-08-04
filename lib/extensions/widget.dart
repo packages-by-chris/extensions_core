@@ -124,7 +124,8 @@ extension WidgetExtension on Widget {
   }
 
   /// Force a width/height ratio.
-  Widget aspectRatio(double ratio) => AspectRatio(aspectRatio: ratio, child: this);
+  Widget aspectRatio(double ratio) =>
+      AspectRatio(aspectRatio: ratio, child: this);
 
   /// Set the width (height unconstrained).
   Widget width(double w) => SizedBox(width: w, child: this);
