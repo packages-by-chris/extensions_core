@@ -294,6 +294,8 @@ TextStyle().bold.color(Colors.red).size(24);
 `sizeBytes` · `sizeFormatted` · `sizeInMB` · `isImage` · `isVideo` ·
 `isAudio` · `readAsStringSafe`
 
+Only available where `dart:io` exists (not on the web).
+
 ```dart
 File('photo.jpg').isImage;   // true
 file.sizeFormatted();        // "1.23 MB"

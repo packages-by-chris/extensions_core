@@ -1,10 +1,9 @@
-/// Runtime and target platform detection.
+/// Runtime and target platform detection (web-safe).
 library;
 
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+import 'platform_flags.dart' as flags;
 
 /// Platform extensions
 extension PlatformExt on BuildContext {
@@ -12,13 +11,13 @@ extension PlatformExt on BuildContext {
 
   /// Platform info
   PlatformInfo get platform => PlatformInfo(
-        isAndroid: !kIsWeb && Platform.isAndroid,
-        isWeb: kIsWeb,
-        isMacOS: !kIsWeb && Platform.isMacOS,
-        isWindows: !kIsWeb && Platform.isWindows,
-        isFuchsia: !kIsWeb && Platform.isFuchsia,
-        isIOS: !kIsWeb && Platform.isIOS,
-        isLinux: !kIsWeb && Platform.isLinux,
+        isAndroid: flags.isAndroid,
+        isWeb: flags.isWeb,
+        isMacOS: flags.isMacOS,
+        isWindows: flags.isWindows,
+        isFuchsia: flags.isFuchsia,
+        isIOS: flags.isIOS,
+        isLinux: flags.isLinux,
       );
 
   /// Target platform info

@@ -9,6 +9,7 @@
 - Rewrote the `pubspec.yaml` description (previous one was too short, costing pub points).
 - Added dartdoc comments across the whole public API: every library, extension, class, and member is now documented (262 → 100% coverage).
 - Expanded `example/example.dart` to demonstrate extensions from every file in the package.
+- **The package now compiles on the web (and is WASM-ready).** `dart:io` usages moved behind conditional imports: `platform.dart` OS detection uses `platform_flags.dart` (stub/web implementations), and `File` extensions moved to `file_io.dart`, exported only where `dart:io` exists. Added `lib/extensions_core.dart` as the primary entry point (the `extensions.dart` barrel still works).
 
 ### Removed
 
