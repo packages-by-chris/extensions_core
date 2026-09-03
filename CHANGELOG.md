@@ -1,3 +1,19 @@
+## 0.0.6
+
+### Added
+
+- `lib/extensions_core.dart` — primary library entry point (importing `package:extensions_core/extensions_core.dart` now works; the existing `extensions.dart` barrel is unchanged and still exported).
+
+### Changed
+
+- **Web and WASM support.** `dart:io` usage moved behind conditional imports:
+  - `PlatformInfo` OS detection no longer imports `dart:io` directly — new `platform_flags.dart` with io/web implementations (`kIsWeb` + `Platform` on native, all-false-but-web on browsers).
+  - `File` extensions moved to `file_io.dart`, exported only where `dart:io` exists — they remain unavailable on the web (documented in the README).
+- pubspec now declares `repository` and `issue_tracker`, and `topics` (`dart`, `flutter`, `extensions`, `utilities`).
+- Verified with pana: 160/160 points, 6/6 platforms supported, WASM-ready.
+
+---
+
 ## 0.0.5
 
 ### Added

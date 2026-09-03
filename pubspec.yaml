@@ -2,7 +2,7 @@ name: extensions_core
 description: >-
   A dependency-light collection of Dart and Flutter extension methods for
   strings, numbers, dates, collections, colors, widgets, navigation, and more.
-version: 0.0.5
+version: 0.0.6
 homepage: https://github.com/LeanQChris/extensions.git
 repository: https://github.com/LeanQChris/extensions
 issue_tracker: https://github.com/LeanQChris/extensions/issues
