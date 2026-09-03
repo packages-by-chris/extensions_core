@@ -1,3 +1,7 @@
+/// Formatting helpers on [Duration].
+library;
+
+/// Extensions on [Duration] for week math and formatting.
 extension DurationExtensions on Duration {
   /// Number of whole weeks.
   int get inWeeks => inDays ~/ 7;

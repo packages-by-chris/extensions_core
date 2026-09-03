@@ -1,3 +1,6 @@
+/// Scope functions and null checks on any object.
+library;
+
 /// Object helpers (Kotlin-style scope functions).
 extension ObjectExtensions<T> on T {
   /// Calls [block] with `this` as argument and returns the result.
@@ -13,6 +16,7 @@ extension ObjectExtensions<T> on T {
   R run<R>(R Function(T) block) => block(this);
 }
 
+/// Null checks on any nullable value.
 extension NullableObjectExtensions on Object? {
   /// Whether the value is `null`.
   bool get isNull => this == null;

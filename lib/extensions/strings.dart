@@ -1,3 +1,6 @@
+/// String helpers: validation, case conversion, parsing, slicing.
+library;
+
 import 'dart:convert';
 
 /// String helpers that can also be used on `null` strings.
@@ -13,6 +16,7 @@ List<String> _wordParts(String s) => s
     .map((w) => w.toLowerCase())
     .toList();
 
+/// Extensions on [String] for validation and transformation.
 extension StringExtensions on String {
   /// Checks if the string is a valid email.
   bool isEmail() {

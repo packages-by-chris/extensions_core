@@ -1,3 +1,25 @@
+## 0.0.5
+
+### Added
+
+- `example/example.dart` — runnable demo showing common extensions (adds the pub.dev "package has an example" points).
+
+### Changed
+
+- Rewrote the `pubspec.yaml` description (previous one was too short, costing pub points).
+- Added dartdoc comments across the whole public API: every library, extension, class, and member is now documented (262 → 100% coverage).
+- Expanded `example/example.dart` to demonstrate extensions from every file in the package.
+
+### Removed
+
+- Unusable `TextStyle` extension members that collided with instance fields of `TextStyle` and could never be called: `color()`, `letterSpacing()`, `wordSpacing()`, `backgroundColor()`, `fontFamily()`, `decorationThickness()`, and the no-op `align()`. Use `copyWith(color: …)` etc. instead.
+
+### Tests
+
+- No API changes; all 36 existing tests pass, `flutter analyze` and `dart format` clean, local pana score 160/160.
+
+---
+
 ## 0.0.4
 
 ### Added

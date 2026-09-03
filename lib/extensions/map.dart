@@ -1,3 +1,7 @@
+/// Map helpers: merging, filtering, key/value transforms.
+library;
+
+/// Extensions on [Map] for lookup and transformation.
 extension MapExtensions<K, V> on Map<K, V> {
   /// Gets a value from a map, or a default value if the key doesn't exist.
   V getOrElse(K key, V defaultValue) {

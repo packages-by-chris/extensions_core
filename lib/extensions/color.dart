@@ -1,5 +1,9 @@
+/// Color manipulation helpers: hex conversion, blending, HSV access.
+library;
+
 import 'package:flutter/material.dart';
 
+/// Extensions on [Color] for hex conversion, blending, and HSV math.
 extension ColorExtensions on Color {
   /// Converts a Color to a hex string.
   String toHex({bool leadingHashSign = true}) => '${leadingHashSign ? '#' : ''}'

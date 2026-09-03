@@ -1,3 +1,6 @@
+/// Image helpers: base64 encoding and color filters.
+library;
+
 import 'dart:async';
 import 'dart:convert';
 
@@ -5,6 +8,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+/// Extensions on [Image] for encoding and filtering.
 extension ImageExtensions on Image {
   /// Converts an image to a base64 string.
   Future<String> toBase64() async {

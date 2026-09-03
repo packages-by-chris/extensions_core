@@ -1,8 +1,12 @@
+/// Widget modifiers: padding, gestures, transforms, constraints.
+library;
+
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
+/// Chainable modifiers on [Widget].
 extension WidgetExtension on Widget {
   /// Wrap widget with padding
   Widget padding([EdgeInsetsGeometry value = const EdgeInsets.all(16)]) {

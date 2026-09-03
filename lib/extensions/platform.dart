@@ -1,3 +1,6 @@
+/// Runtime and target platform detection.
+library;
+
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -29,7 +32,9 @@ extension PlatformExt on BuildContext {
       );
 }
 
+/// Flags for the platform the app is actually running on.
 class PlatformInfo {
+  /// Creates a [PlatformInfo] with the given flags.
   const PlatformInfo({
     required this.isAndroid,
     required this.isMacOS,
@@ -62,7 +67,9 @@ class PlatformInfo {
   final bool isLinux;
 }
 
+/// Flags for the [TargetPlatform] resolved from the widget tree theme.
 class TargetPlatformInfo {
+  /// Creates a [TargetPlatformInfo] with the given flags.
   const TargetPlatformInfo({
     required this.isAndroid,
     required this.isFuchsia,

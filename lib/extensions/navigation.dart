@@ -1,3 +1,6 @@
+/// Navigation helpers on [BuildContext]: push, replace, transitions.
+library;
+
 import 'package:flutter/material.dart';
 
 PageRouteBuilder _fadeTransition(Widget screen) => PageRouteBuilder(
@@ -6,7 +9,10 @@ PageRouteBuilder _fadeTransition(Widget screen) => PageRouteBuilder(
       return FadeTransition(opacity: animation, child: child);
     });
 
+/// Navigation shortcuts for [BuildContext].
 extension NavigationExtension on BuildContext {
+  /// Pushes [screen]; set [fade] for a fade transition.
+  /// [state] is ignored (kept for backwards compatibility).
   Future navigateTo({required Widget screen, state, bool fade = false}) =>
       Navigator.push(
           this,
@@ -14,6 +20,7 @@ extension NavigationExtension on BuildContext {
               ? _fadeTransition(screen)
               : MaterialPageRoute(builder: (_) => screen));
 
+  /// Pushes [screen] and runs [onBack] when it pops.
   Future<Null> navigateAndRestore(
           {required Widget screen, onBack, bool fade = false}) =>
       Navigator.of(this)
@@ -22,10 +29,12 @@ extension NavigationExtension on BuildContext {
               : MaterialPageRoute(builder: (_) => screen))
           .then((val) {});
 
+  /// Replaces the current screen with [screen].
   Future navigateToReplace({required Widget screen}) =>
       Navigator.pushReplacement(
           this, MaterialPageRoute(builder: (_) => screen));
 
+  /// Pushes [screen] and removes every route below it.
   Future navigateAndRemoveUntil({required Widget screen, bool fade = false}) =>
       Navigator.of(this).pushAndRemoveUntil(
           fade
@@ -33,6 +42,7 @@ extension NavigationExtension on BuildContext {
               : MaterialPageRoute(builder: (_) => screen),
           (Route<dynamic> route) => false);
 
+  /// Pops the current screen.
   void navigateBack() => Navigator.pop(this);
 
   /// Navigate to a new screen

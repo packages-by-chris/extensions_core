@@ -1,3 +1,7 @@
+/// Collection helpers: grouping, zipping, and numeric aggregates.
+library;
+
+/// Extensions on [Iterable] for querying and grouping.
 extension IterableExtensions<T> on Iterable<T> {
   /// Finds the first element that satisfies a condition, or return `null`.
   T? firstWhereOrNull(bool Function(T) test) {
@@ -70,6 +74,7 @@ extension IterableExtensions<T> on Iterable<T> {
   }
 }
 
+/// Numeric aggregates (`sum`, `min`, `max`, `average`).
 extension NumIterableExtensions on Iterable<num> {
   /// Sum of all elements (0 when empty).
   num get sum => fold(0, (a, b) => a + b);
@@ -98,11 +103,13 @@ extension NumIterableExtensions on Iterable<num> {
   double get average => isEmpty ? 0.0 : sum / length;
 }
 
+/// Helpers for iterables of iterables.
 extension IterableNestedExtensions<T> on Iterable<Iterable<T>> {
   /// Flattens a nested iterable into a single list.
   List<T> flatten() => expand((e) => e).toList();
 }
 
+/// Helpers for iterables of 2-element records.
 extension RecordIterableExtensions<R, S> on Iterable<(R, S)> {
   /// Splits an iterable of records into two lists.
   (List<R>, List<S>) unzip() {

@@ -1,3 +1,7 @@
+/// Rounding and interpolation helpers on [double].
+library;
+
+/// Extensions on [double] for rounding and interpolation.
 extension DoubleExtensions on double {
   /// Formats a double to a fixed number of decimal places.
   double toFixed(int fractionDigits) {

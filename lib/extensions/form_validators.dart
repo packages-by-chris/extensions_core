@@ -1,3 +1,6 @@
+/// Form field validators for `TextFormField` and friends.
+library;
+
 import 'strings.dart';
 
 /// Validator helpers returning an error [String] or `null` when valid.

@@ -1,13 +1,18 @@
+/// Date helpers: formatting, comparisons, and boundary getters.
+library;
+
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
-/// Extension for DateTime with BuildContext support
+/// Extensions on [DateTime] for formatting, checks, and boundaries.
 extension DateTimeExtensions on DateTime {
+  /// Whether it is the same calendar day as today.
   bool isToday() {
     final now = DateTime.now();
     return year == now.year && month == now.month && day == now.day;
   }
 
+  /// Formats the date with an intl [pattern] (e.g. `yyyy-MM-dd`).
   String format(String pattern) {
     final formatter = DateFormat(pattern);
     return formatter.format(this);

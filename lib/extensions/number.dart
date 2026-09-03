@@ -1,8 +1,12 @@
+/// Formatting, conversion, and predicate helpers on [num].
+library;
+
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+/// Formatting and conversion extensions on [num].
 extension NumExtension on num {
   /// Convert number to currency format
   String toCurrency({String symbol = '\$', String locale = 'en_US'}) {
@@ -31,13 +35,23 @@ extension NumExtension on num {
 
   /// Convert to Duration
   Duration get milliseconds => Duration(milliseconds: toInt());
+
+  /// This number as a [Duration] of seconds.
   Duration get seconds => Duration(seconds: toInt());
+
+  /// This number as a [Duration] of minutes.
   Duration get minutes => Duration(minutes: toInt());
+
+  /// This number as a [Duration] of hours.
   Duration get hours => Duration(hours: toInt());
+
+  /// This number as a [Duration] of days.
   Duration get days => Duration(days: toInt());
 
   /// Convert to SizedBox (useful for spacing)
   Widget get heightBox => SizedBox(height: toDouble());
+
+  /// This number as a [SizedBox] width.
   Widget get widthBox => SizedBox(width: toDouble());
 
   /// Check if number is between a range
@@ -54,6 +68,8 @@ extension NumExtension on num {
 
   /// Convert to radians/degrees
   double get toRadians => this * (pi / 180);
+
+  /// This number converted from degrees to radians.
   double get toDegrees => this * (180 / pi);
 
   // --- Predicates ---
@@ -83,6 +99,7 @@ extension NumExtension on num {
   }
 }
 
+/// Even/odd checks, ordinal suffixes, and radix conversions on [int].
 extension IntExtensions on int {
   /// Whether the int is even.
   bool get isEven => this % 2 == 0;

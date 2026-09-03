@@ -1,3 +1,6 @@
+/// Barrel file exposing every extension in the package.
+library;
+
 export './extensions/date.dart';
 export './extensions/alert.dart';
 export './extensions/list.dart';

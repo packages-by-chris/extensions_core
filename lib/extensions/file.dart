@@ -1,6 +1,10 @@
+/// File metadata helpers (VM only, not web).
+library;
+
 import 'dart:io';
 import 'dart:math';
 
+/// Extensions on [File] for sizes and media-type checks.
 extension FileExtensions on File {
   /// Gets the file size in bytes.
   int get sizeBytes => lengthSync();

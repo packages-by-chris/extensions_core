@@ -1,3 +1,6 @@
+/// EdgeInsets helpers.
+library;
+
 import 'package:flutter/widgets.dart';
 
 /// [EdgeInsets] has no `copyWith` in Flutter, so we add one.

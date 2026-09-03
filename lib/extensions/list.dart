@@ -1,3 +1,7 @@
+/// List helpers: slicing, chunking, deduplication, rotation.
+library;
+
+/// Extensions on [List] for slicing and transformations.
 extension ListExtensions<T> on List<T> {
   /// Checks if the list is null or empty.
   bool isNullOrEmpty() {
