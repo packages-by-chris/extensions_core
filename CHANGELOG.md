@@ -1,3 +1,49 @@
+## 0.1.0
+
+### Fixed
+
+- `num.toPercentage()` no longer corrupts its output: `100` now renders as
+  `100%` (previously `1%`), `0` as `0%`, and the `decimals` argument is honored.
+- `num.toDecimal()` now honors its `decimals` argument (`1.5.toDecimal(decimals: 3)`
+  -> `1.500`); it previously ignored it.
+- `Map.getOrElse()` now distinguishes an absent key from a key whose value is
+  `null` (returns the default only when the key is absent).
+- `Map.deepMerge()` no longer performs an unsound `Map` cast on nested values.
+- `Iterable.whereNotNull()` moved from `List<T>` to `Iterable<T?>` so it actually
+  narrows the element type (`[1, null, 2].whereNotNull()` -> `List<int>`).
+- `BuildContext.navigateAndRestore()` now invokes its `onBack` callback when the
+  pushed route pops (previously ignored).
+- `Image.toBase64()` now completes with an error on load/encode failure and
+  removes its image-stream listener instead of leaking it.
+- `Color.toMaterialColor()` now follows Material shade direction (`50` lightest
+  towards white, `900` darkest towards black).
+
+### Changed
+
+- `navigateTo`, `navigateToReplace`, and `navigateAndRemoveUntil` are now generic
+  and return `Future<T?>`; `navigateTo`'s `state` parameter is typed and documented
+  as ignored for backwards compatibility.
+- `List.isNullOrEmpty()` replaced by an `isNullOrEmpty` getter on `Iterable<T>?`
+  (the old method could never be called on `null`).
+- `String.toTitleCase()` collapses whitespace; `String.truncate()` handles
+  non-positive lengths.
+
+### Removed
+
+- Dead extension members that could never be called because `dart:core` wins
+  resolution: `num.clamp`, `int.isEven`, and `int.isOdd`. Use the `dart:core`
+  members (`num.clamp`, `int.isEven`, `int.isOdd`) directly.
+
+### Added
+
+- GitHub Actions CI (format check, analyze, tests, publish dry-run) and an API
+  docs workflow that publishes dartdoc to GitHub Pages.
+- `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, and issue/PR templates.
+- Regression tests for every fix plus previously untested extensions (64 tests,
+  up from 36).
+
+---
+
 ## 0.0.6
 
 ### Added
@@ -76,8 +122,6 @@
 ---
 
 ## 0.0.3
-
-## What's Changed
 
 ### Dependencies
 

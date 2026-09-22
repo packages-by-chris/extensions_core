@@ -10,18 +10,41 @@ import 'package:flutter/widgets.dart';
 
 /// Extensions on [Image] for encoding and filtering.
 extension ImageExtensions on Image {
-  /// Converts an image to a base64 string.
-  Future<String> toBase64() async {
+  /// Encodes the resolved image as a base64 PNG string.
+  ///
+  /// Completes with an error if the image fails to load or encode. The stream
+  /// listener is removed once the image resolves.
+  Future<String> toBase64() {
     final completer = Completer<String>();
-    image.resolve(ImageConfiguration()).addListener(
-      ImageStreamListener((info, _) async {
-        final byteData =
-            await info.image.toByteData(format: ImageByteFormat.png);
-        final buffer = byteData!.buffer.asUint8List();
-        final base64 = base64Encode(buffer);
-        completer.complete(base64);
-      }),
+    final stream = image.resolve(ImageConfiguration.empty);
+    late final ImageStreamListener listener;
+    listener = ImageStreamListener(
+      (info, _) async {
+        try {
+          final byteData =
+              await info.image.toByteData(format: ImageByteFormat.png);
+          if (byteData == null) {
+            completer
+                .completeError(StateError('Failed to encode image to PNG'));
+          } else {
+            completer.complete(base64Encode(byteData.buffer.asUint8List()));
+          }
+        } catch (error, stackTrace) {
+          if (!completer.isCompleted) {
+            completer.completeError(error, stackTrace);
+          }
+        } finally {
+          stream.removeListener(listener);
+        }
+      },
+      onError: (error, stackTrace) {
+        if (!completer.isCompleted) {
+          completer.completeError(error, stackTrace);
+        }
+        stream.removeListener(listener);
+      },
     );
+    stream.addListener(listener);
     return completer.future;
   }
 

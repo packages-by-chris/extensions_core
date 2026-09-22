@@ -1,0 +1,45 @@
+name: Bug report
+description: Report a problem with an extension
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to file a bug report.
+  - type: input
+    id: extension
+    attributes:
+      label: Affected extension
+      description: Which extension/member is involved?
+      placeholder: e.g. String.toCamelCase, Color.toHex
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: A clear description of the bug, with expected vs actual output.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      description: A small code snippet that reproduces the issue.
+      render: dart
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      placeholder: e.g. 0.1.0
+    validations:
+      required: true
+  - type: input
+    id: flutter
+    attributes:
+      label: Flutter / Dart version
+      description: Output of `flutter --version`.
+    validations:
+      required: true

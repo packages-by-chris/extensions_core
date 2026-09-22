@@ -21,16 +21,23 @@ extension NumExtension on num {
     return NumberFormat.compact(locale: locale).format(this);
   }
 
-  /// Convert number to percentage
+  /// Formats this number as a percentage, e.g. `55.5.toPercentage()` -> `56%`.
+  ///
+  /// The value is treated as an already-scaled percentage (`100` -> `100%`),
+  /// not a fraction. [decimals] controls the fraction digits.
   String toPercentage({int decimals = 0, String locale = 'en_US'}) {
-    return NumberFormat.percentPattern(locale)
-        .format(this / 100)
-        .replaceAll(RegExp(r'0+%'), '%');
+    final formatter = NumberFormat.decimalPattern(locale)
+      ..minimumFractionDigits = decimals
+      ..maximumFractionDigits = decimals;
+    return '${formatter.format(this)}%';
   }
 
-  /// Format number with specific decimal places
+  /// Formats the number with exactly [decimals] fraction digits.
   String toDecimal({int decimals = 2, String locale = 'en_US'}) {
-    return NumberFormat.decimalPattern(locale).format(this);
+    final formatter = NumberFormat.decimalPattern(locale)
+      ..minimumFractionDigits = decimals
+      ..maximumFractionDigits = decimals;
+    return formatter.format(this);
   }
 
   /// Convert to Duration
@@ -57,13 +64,6 @@ extension NumExtension on num {
   /// Check if number is between a range
   bool isBetween(num start, num end) {
     return this >= start && this <= end;
-  }
-
-  /// Ensure number is within a range
-  num clamp(num min, num max) {
-    if (this < min) return min;
-    if (this > max) return max;
-    return this;
   }
 
   /// Convert to radians/degrees
@@ -99,14 +99,10 @@ extension NumExtension on num {
   }
 }
 
-/// Even/odd checks, ordinal suffixes, and radix conversions on [int].
+/// Ordinal suffixes and radix conversions on [int].
+///
+/// Even/odd checks come from `dart:core` (`int.isEven` / `int.isOdd`).
 extension IntExtensions on int {
-  /// Whether the int is even.
-  bool get isEven => this % 2 == 0;
-
-  /// Whether the int is odd.
-  bool get isOdd => this % 2 != 0;
-
   /// Ordinal suffix (e.g. `1st`, `2nd`, `3rd`, `11th`).
   String ordinal() {
     if (this % 100 >= 11 && this % 100 <= 13) return '${this}th';

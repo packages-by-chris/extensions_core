@@ -18,13 +18,19 @@ extension DateTimeExtensions on DateTime {
     return formatter.format(this);
   }
 
-  /// Get formatted date string based on locale from BuildContext
+  /// Formats the date using the locale from [context].
+  ///
+  /// Requires a `Localizations` ancestor above [context] (e.g. a
+  /// `MaterialApp`); otherwise [Localizations.localeOf] throws.
   String formattedDate(BuildContext context, {String pattern = 'yyyy-MM-dd'}) {
     Locale locale = Localizations.localeOf(context);
     return DateFormat(pattern, locale.toString()).format(this);
   }
 
-  /// Get relative time description (e.g., "5 minutes ago")
+  /// Relative time description (e.g., "5 minutes ago").
+  ///
+  /// Dates older than a week fall back to [formattedDate], so [context] must
+  /// have a `Localizations` ancestor.
   String timeAgo(BuildContext context) {
     Duration difference = DateTime.now().difference(this);
 

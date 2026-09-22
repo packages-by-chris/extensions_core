@@ -103,6 +103,21 @@ extension NumIterableExtensions on Iterable<num> {
   double get average => isEmpty ? 0.0 : sum / length;
 }
 
+/// Helpers for nullable iterables and iterables of nullable elements.
+extension NullableIterableExtensions<T> on Iterable<T>? {
+  /// Whether the iterable is `null` or empty.
+  bool get isNullOrEmpty => this == null || this!.isEmpty;
+}
+
+/// Removes `null` elements while narrowing the element type.
+extension NullableElementIterableExtensions<T> on Iterable<T?> {
+  /// Returns a new list with every `null` element removed.
+  List<T> whereNotNull() => [
+        for (final element in this)
+          if (element != null) element
+      ];
+}
+
 /// Helpers for iterables of iterables.
 extension IterableNestedExtensions<T> on Iterable<Iterable<T>> {
   /// Flattens a nested iterable into a single list.

@@ -3,17 +3,23 @@ library;
 
 /// Extensions on [Map] for lookup and transformation.
 extension MapExtensions<K, V> on Map<K, V> {
-  /// Gets a value from a map, or a default value if the key doesn't exist.
-  V getOrElse(K key, V defaultValue) {
-    return this[key] ?? defaultValue;
-  }
+  /// Gets a value from a map, or a default value if the key is absent.
+  ///
+  /// Unlike `this[key] ?? defaultValue`, a key that is present with a `null`
+  /// value returns `null` rather than the default.
+  V getOrElse(K key, V defaultValue) =>
+      containsKey(key) ? this[key] as V : defaultValue;
 
   /// Recursively merges two maps.
+  ///
+  /// Nested maps are merged key-by-key; any other value from [other] wins.
   Map<K, V> deepMerge(Map<K, V> other) {
     final result = Map<K, V>.from(this);
     other.forEach((key, value) {
-      if (result.containsKey(key) && result[key] is Map && value is Map) {
-        result[key] = (result[key] as Map).deepMerge(value as Map) as V;
+      final existing = result[key];
+      if (existing is Map && value is Map) {
+        result[key] = Map<dynamic, dynamic>.from(existing)
+            .deepMerge(Map<dynamic, dynamic>.from(value)) as V;
       } else {
         result[key] = value;
       }

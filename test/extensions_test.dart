@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -395,5 +397,375 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('sheet'), findsOneWidget);
     });
+
+    testWidgets('navigateAndRestore fires onBack', (tester) async {
+      await tester
+          .pumpWidget(MaterialApp(home: const Scaffold(body: SizedBox())));
+      final context = tester.element(find.byType(Scaffold));
+      var back = false;
+      context.navigateAndRestore(
+        screen: const Scaffold(body: Text('restore')),
+        onBack: () => back = true,
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('restore'), findsOneWidget);
+      context.navigateBack();
+      await tester.pumpAndSettle();
+      expect(back, isTrue);
+    });
   });
+
+  group('Number formatting', () {
+    test('toPercentage', () {
+      expect(100.toPercentage(), '100%');
+      expect(0.toPercentage(), '0%');
+      expect(10.toPercentage(), '10%');
+      expect(55.5.toPercentage(decimals: 1), '55.5%');
+      expect(12.34.toPercentage(decimals: 2), '12.34%');
+    });
+
+    test('toDecimal', () {
+      expect(1.5.toDecimal(decimals: 3), '1.500');
+      expect(1234.567.toDecimal(decimals: 3), '1,234.567');
+      expect(2.toDecimal(decimals: 0), '2');
+    });
+
+    test('toCurrency/toCompact', () {
+      expect(1234.5.toCurrency(), '\$1,234.50');
+      expect(9800000.toCompact(), '9.8M');
+    });
+
+    test('duration getters', () {
+      expect(5.seconds, const Duration(seconds: 5));
+      expect(2.minutes, const Duration(minutes: 2));
+      expect(3.hours, const Duration(hours: 3));
+      expect(1.days, const Duration(days: 1));
+      expect(100.milliseconds, const Duration(milliseconds: 100));
+    });
+
+    test('radians/degrees/isBetween', () {
+      expect(180.toRadians, closeTo(pi, 1e-9));
+      expect(pi.toDegrees, closeTo(180, 1e-9));
+      expect(5.isBetween(1, 10), isTrue);
+      expect(0.isBetween(1, 10), isFalse);
+    });
+  });
+
+  group('Double', () {
+    test('toFixed/lerp', () {
+      expect(3.14159.toFixed(2), 3.14);
+      expect(0.0.lerp(10.0, 0.25), 2.5);
+    });
+  });
+
+  group('String extras', () {
+    test('truncate', () {
+      expect('abcdef'.truncate(3), 'abc...');
+      expect('ab'.truncate(5), 'ab');
+      expect('abcdef'.truncate(0), '...');
+    });
+
+    test('toTitleCase collapses whitespace', () {
+      expect('  hello   world '.toTitleCase(), 'Hello World');
+    });
+
+    test('isStrongPassword options', () {
+      expect(
+        'Abcdefgh'.isStrongPassword(requireDigit: false, requireSpecial: false),
+        isTrue,
+      );
+      expect('abcdefgh'.isStrongPassword(), isFalse);
+    });
+  });
+
+  group('Iterable extras', () {
+    test('sumBy/averageBy/groupBy', () {
+      expect([1, 2, 3].sumBy((n) => n * 2), 12);
+      expect([1, 2, 3].averageBy((n) => n), 2.0);
+      expect(<int>[].averageBy((n) => n), 0);
+      expect(
+        ['a', 'bb', 'c'].groupBy((s) => s.length),
+        {
+          1: ['a', 'c'],
+          2: ['bb'],
+        },
+      );
+    });
+
+    test('containsAny/flatten empty', () {
+      expect([1, 2].containsAny([5, 2]), isTrue);
+      expect(<List<int>>[].flatten(), isEmpty);
+    });
+  });
+
+  group('List extras', () {
+    test('takeFirst/takeLast/chunked', () {
+      final list = [1, 2, 3, 4, 5];
+      expect(list.takeFirst(2), [1, 2]);
+      expect(list.takeLast(2), [4, 5]);
+      expect(list.takeFirst(99), list);
+      expect(list.chunked(2), [
+        [1, 2],
+        [3, 4],
+        [5],
+      ]);
+      expect(list.chunked(0), isEmpty);
+    });
+
+    test('whereNotNull narrows to non-null type', () {
+      final List<int> result = [1, null, 2].whereNotNull();
+      expect(result, [1, 2]);
+    });
+
+    test('isNullOrEmpty on nullable iterable', () {
+      List<int>? list;
+      expect(list.isNullOrEmpty, isTrue);
+      expect(<int>[].isNullOrEmpty, isTrue);
+      expect([1].isNullOrEmpty, isFalse);
+    });
+
+    test('safeGet/hasUnique/distinct/mapToList/reversedList', () {
+      expect([1, 2].safeGet(5), isNull);
+      expect([1, 2].safeGet(-1), isNull);
+      expect([1, 1, 2].hasUniqueElements(), isFalse);
+      expect([1, 1, 2].distinct(), [1, 2]);
+      expect([1, 2].mapToList((n) => n + 1), [2, 3]);
+      expect([1, 2].reversedList(), [2, 1]);
+    });
+  });
+
+  group('Map extras', () {
+    test('getOrElse distinguishes null values', () {
+      final map = <String, int?>{'a': null};
+      expect(map.getOrElse('a', 1), isNull);
+      expect(map.getOrElse('b', 1), 1);
+    });
+
+    test('deepMerge nested maps', () {
+      final a = <String, dynamic>{
+        'x': {'a': 1, 'b': 2},
+      };
+      final b = <String, dynamic>{
+        'x': {'b': 9, 'c': 3},
+        'y': 1,
+      };
+      expect(a.deepMerge(b), {
+        'x': {'a': 1, 'b': 9, 'c': 3},
+        'y': 1,
+      });
+    });
+  });
+
+  group('Color extras', () {
+    test('toMaterialColor light/dark direction', () {
+      const base = Color(0xFF2196F3);
+      final swatch = base.toMaterialColor();
+      expect(swatch[500], base);
+      expect(
+        swatch[50]!.computeLuminance(),
+        greaterThan(swatch[500]!.computeLuminance()),
+      );
+      expect(
+        swatch[900]!.computeLuminance(),
+        lessThan(swatch[500]!.computeLuminance()),
+      );
+    });
+  });
+
+  group('Icon', () {
+    test('withColor/withSize', () {
+      const icon = Icon(Icons.star, size: 20, color: Colors.black);
+      expect(icon.withColor(Colors.red).color, Colors.red);
+      expect(icon.withSize(48).size, 48);
+      expect(icon.withSize(48).color, Colors.black);
+    });
+  });
+
+  group('TextStyle', () {
+    test('chainable modifiers', () {
+      expect(const TextStyle().size(20).fontSize, 20);
+      expect(const TextStyle().bold.fontWeight, FontWeight.bold);
+      expect(const TextStyle().italic.fontStyle, FontStyle.italic);
+      expect(const TextStyle().underline.decoration, TextDecoration.underline);
+      expect(const TextStyle(fontSize: 10).scaleSize(2).fontSize, 20);
+      expect(const TextStyle().withShadow().shadows, hasLength(1));
+      expect(const TextStyle().glow(spread: 2).shadows, hasLength(2));
+      expect(const TextStyle().outlined().foreground, isNotNull);
+      expect(const TextStyle().lineHeight(1.5).height, 1.5);
+    });
+  });
+
+  group('BuildContext', () {
+    testWidgets('media/theme/device', (tester) async {
+      late BuildContext context;
+      await tester.pumpWidget(MaterialApp(
+        home: Builder(builder: (c) {
+          context = c;
+          return const SizedBox();
+        }),
+      ));
+      expect(context.screenSize, const Size(800, 600));
+      expect(context.isLandscape, isTrue);
+      expect(context.isTablet, isTrue);
+      expect(context.isMobile, isFalse);
+      expect(context.textDirection, TextDirection.ltr);
+      expect(context.locale.languageCode, 'en');
+      expect(context.isDarkMode, isFalse);
+      expect(context.isLightMode, isTrue);
+      expect(context.mediaQuery, isA<MediaQueryData>());
+      expect(context.safePadding, isA<EdgeInsets>());
+      expect(context.textScaler.scale(10), 10);
+      expect(context.devicePixelRatio, greaterThan(0));
+    });
+  });
+
+  group('Platform', () {
+    testWidgets('runtime and target flags', (tester) async {
+      late BuildContext context;
+      await tester.pumpWidget(MaterialApp(
+        home: Builder(builder: (c) {
+          context = c;
+          return const SizedBox();
+        }),
+      ));
+      final runtime = context.platform;
+      expect(runtime, isA<PlatformInfo>());
+      final runtimeFlags = [
+        runtime.isWeb,
+        runtime.isAndroid,
+        runtime.isIOS,
+        runtime.isMacOS,
+        runtime.isWindows,
+        runtime.isLinux,
+        runtime.isFuchsia,
+      ];
+      expect(runtimeFlags.where((flag) => flag), hasLength(1));
+
+      final target = context.targetPlatform;
+      expect(target, isA<TargetPlatformInfo>());
+      final targetFlags = [
+        target.isAndroid,
+        target.isFuchsia,
+        target.isIOS,
+        target.isLinux,
+        target.isMacOS,
+        target.isWindows,
+      ];
+      expect(targetFlags.where((flag) => flag), hasLength(1));
+    });
+  });
+
+  group('State', () {
+    testWidgets('safeSetState', (tester) async {
+      await tester.pumpWidget(const MaterialApp(home: _Counter()));
+      expect(find.text('count: 0'), findsOneWidget);
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pump();
+      expect(find.text('count: 1'), findsOneWidget);
+    });
+  });
+
+  group('Snackbar & Dialog', () {
+    testWidgets('showSnackBar/removeSnackBar', (tester) async {
+      late BuildContext context;
+      await tester.pumpWidget(MaterialApp(
+        home: Builder(builder: (c) {
+          context = c;
+          return const Scaffold(body: SizedBox());
+        }),
+      ));
+      context.showSnackBar('hello');
+      await tester.pump();
+      expect(find.text('hello'), findsOneWidget);
+      context.removeSnackBar();
+      await tester.pumpAndSettle();
+      expect(find.text('hello'), findsNothing);
+    });
+
+    testWidgets('showCusDialog/showAppDialog', (tester) async {
+      late BuildContext context;
+      await tester.pumpWidget(MaterialApp(
+        home: Builder(builder: (c) {
+          context = c;
+          return const Scaffold(body: SizedBox());
+        }),
+      ));
+      context.showCusDialog(const AlertDialog(content: Text('custom')));
+      await tester.pumpAndSettle();
+      expect(find.text('custom'), findsOneWidget);
+      context.navigateBack();
+      await tester.pumpAndSettle();
+      context.showAppDialog(title: 'T', content: const Text('body'));
+      await tester.pumpAndSettle();
+      expect(find.text('T'), findsOneWidget);
+      expect(find.text('body'), findsOneWidget);
+    });
+  });
+
+  group('Image', () {
+    testWidgets('toBase64', (tester) async {
+      final bytes = base64Decode(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJ'
+        'AAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+      );
+      final image = Image(image: MemoryImage(bytes));
+      await tester.pumpWidget(MaterialApp(home: image));
+      final encoded = await tester.runAsync(() => image.toBase64());
+      expect(encoded, isNotEmpty);
+    });
+  });
+
+  group('DateTime relative', () {
+    testWidgets('timeAgo/formattedDate', (tester) async {
+      late BuildContext context;
+      await tester.pumpWidget(MaterialApp(
+        home: Builder(builder: (c) {
+          context = c;
+          return const SizedBox();
+        }),
+      ));
+      expect(
+        DateTime.now().subtract(const Duration(minutes: 5)).timeAgo(context),
+        '5 minutes ago',
+      );
+      expect(
+        DateTime.now().subtract(const Duration(days: 3)).timeAgo(context),
+        '3 days ago',
+      );
+      expect(DateTime.now().timeAgo(context), 'Just now');
+      expect(
+        DateTime(2025, 1, 2).formattedDate(context, pattern: 'yyyy-MM-dd'),
+        '2025-01-02',
+      );
+    });
+  });
+}
+
+class _Counter extends StatefulWidget {
+  const _Counter();
+
+  @override
+  State<_Counter> createState() => _CounterState();
+}
+
+class _CounterState extends State<_Counter> {
+  int _count = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('count: $_count'),
+            ElevatedButton(
+              onPressed: () => safeSetState(() => _count++),
+              child: const Text('inc'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

@@ -65,24 +65,24 @@ extension ColorExtensions on Color {
   bool get isTransparent => a == 0;
 
   /// Generates a [MaterialColor] swatch from this color.
+  ///
+  /// Shades lighten towards white (`50`) and darken towards black (`900`),
+  /// following Material conventions. `500` is this color.
   MaterialColor toMaterialColor() {
-    final argb = toARGB32();
-    final r = (argb >> 16) & 0xff;
-    final g = (argb >> 8) & 0xff;
-    final b = argb & 0xff;
-    Color shade(double f) => Color.fromARGB(255, (r * f).round().clamp(0, 255),
-        (g * f).round().clamp(0, 255), (b * f).round().clamp(0, 255));
-    return MaterialColor(argb, <int, Color>{
-      50: shade(0.1),
-      100: shade(0.2),
-      200: shade(0.3),
-      300: shade(0.4),
-      400: shade(0.5),
+    Color shade(double amount) => amount <= 0.5
+        ? Color.lerp(this, Colors.white, (0.5 - amount) * 2)!
+        : Color.lerp(this, Colors.black, (amount - 0.5) * 2)!;
+    return MaterialColor(toARGB32(), <int, Color>{
+      50: shade(0.05),
+      100: shade(0.10),
+      200: shade(0.20),
+      300: shade(0.30),
+      400: shade(0.40),
       500: this,
-      600: shade(0.7),
-      700: shade(0.8),
-      800: shade(0.9),
-      900: shade(1.0),
+      600: shade(0.60),
+      700: shade(0.70),
+      800: shade(0.80),
+      900: shade(0.90),
     });
   }
 }

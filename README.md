@@ -8,6 +8,11 @@ Stop hunting for separate extension packages — `extensions_core` covers the
 daily-driver utilities across strings, numbers, dates, collections, colors,
 widgets, navigation, and more in one place.
 
+[![pub package](https://img.shields.io/pub/v/extensions_core.svg)](https://pub.dev/packages/extensions_core)
+[![pub points](https://img.shields.io/pub/points/extensions_core)](https://pub.dev/packages/extensions_core/score)
+[![pub likes](https://img.shields.io/pub/likes/extensions_core)](https://pub.dev/packages/extensions_core/score)
+[![CI](https://github.com/LeanQChris/extensions/actions/workflows/ci.yml/badge.svg)](https://github.com/LeanQChris/extensions/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/LeanQChris/extensions/branch/main/graph/badge.svg)](https://codecov.io/gh/LeanQChris/extensions)
 ![Dart](https://img.shields.io/badge/Dart-%5E3.6-blue)
 ![Flutter](https://img.shields.io/badge/Flutter-%3E%3D3.27-blueviolet)
 ![License](https://img.shields.io/badge/License-MIT-green)
@@ -55,7 +60,7 @@ Add the package to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  extensions_core: ^0.0.4
+  extensions_core: ^0.1.0
 ```
 
 Then run:
@@ -139,17 +144,21 @@ Formatting: `toCurrency` · `toCompact` · `toPercentage` · `toDecimal` ·
 `formatBytes`
 
 Predicates: `isPositive` · `isZero` · `isDivisibleBy` · `percentageOf` ·
-`isEven` · `isOdd` (int)
+`isEven` · `isOdd` (from `dart:core`)
 
 Conversions: `ordinal` (int) · `toBinary` · `toOctal` · `toHex` (int) ·
 `milliseconds`/`seconds`/`minutes`/`hours`/`days` → `Duration` ·
-`heightBox`/`widthBox` → `SizedBox` · `toRadians` · `toDegrees` ·
-`isBetween` · `clamp`
+`heightBox`/`widthBox` → `SizedBox` · `toRadians` · `toDegrees` · `isBetween`
+
+`toPercentage` treats the value as an already-scaled percentage (`100` ->
+`100%`), and `toDecimal` pads to exactly `decimals` fraction digits.
 
 ```dart
 1.ordinal();              // 1st
 5.toBinary();             // 101
 1024.formatBytes();       // 1.00 KB
+100.toPercentage();       // 100%
+1.5.toDecimal(decimals: 3); // 1.500
 10.heightBox;             // SizedBox(height: 10)
 12.minutes;               // Duration(minutes: 12)
 ```
@@ -196,6 +205,9 @@ const Duration(hours: 2, minutes: 3, seconds: 45).format(); // 2:03:45
 Selection: `firstWhereOrNull` · `distinctBy` · `countWhere` ·
 `containsAll` · `containsAny`
 
+Nullable: `isNullOrEmpty` (on `Iterable<T>?`) · `whereNotNull` (on
+`Iterable<T?>`, narrows to `List<T>`)
+
 Math (`Iterable<num>`): `sum` · `min` · `max` · `average`; plus `sumBy` ·
 `averageBy`
 
@@ -203,8 +215,8 @@ Grouping/joining: `groupBy` · `insertBetween` · `zip` · `unzip` · `flatten`
 
 ### List
 
-`isNullOrEmpty` · `takeLast` · `takeFirst` · `chunked` · `reversedList` ·
-`rotate` · `distinct` · `whereNotNull` · `shuffledList` · `mapToList` ·
+`takeLast` · `takeFirst` · `chunked` · `reversedList` ·
+`rotate` · `distinct` · `shuffledList` · `mapToList` ·
 `safeGet` · `hasUniqueElements`
 
 ```dart
@@ -317,8 +329,8 @@ On `BuildContext`: `platform` and `targetPlatform` expose `isAndroid`, `isIOS`,
 ### Navigation
 
 Transitions: `navigateTo` · `navigateBack` · `navigateToReplace` ·
-`navigateAndRestore` · `navigateAndRemoveUntil` · `pushScreen` ·
-`pushWithFade` · `pushWithSlide` · `replaceScreen`
+`navigateAndRestore` (runs `onBack` on pop) · `navigateAndRemoveUntil` ·
+`pushScreen` · `pushWithFade` · `pushWithSlide` · `replaceScreen`
 
 Stack: `clearStackAndShow` · `popUntilRoute` · `popToFirst` · `canPop` ·
 `maybePop` · `popWithResult` · `currentRouteName`
@@ -371,7 +383,8 @@ TextFormField(
 
 ## Contributing
 
-Contributions are welcome. To keep the package consistent:
+Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). To keep the
+package consistent:
 
 1. Extensions follow the Dart style guide and `flutter_lints`.
 2. New extensions should be added under `lib/extensions/` with a focused file

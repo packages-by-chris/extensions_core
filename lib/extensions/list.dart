@@ -3,14 +3,9 @@ library;
 
 /// Extensions on [List] for slicing and transformations.
 extension ListExtensions<T> on List<T> {
-  /// Checks if the list is null or empty.
-  bool isNullOrEmpty() {
-    return isEmpty;
-  }
-
   /// Returns the last [n] elements of the list.
   List<T> takeLast(int n) {
-    if (isNullOrEmpty()) return [];
+    if (isEmpty) return [];
     if (n >= length) {
       return List.from(this);
     }
@@ -19,7 +14,7 @@ extension ListExtensions<T> on List<T> {
 
   /// Returns the first [n] elements of the list.
   List<T> takeFirst(int n) {
-    if (isNullOrEmpty()) return [];
+    if (isEmpty) return [];
     if (n >= length) {
       return List.from(this);
     }
@@ -28,8 +23,8 @@ extension ListExtensions<T> on List<T> {
 
   /// Splits the list into chunks of size [chunkSize].
   List<List<T>> chunked(int chunkSize) {
-    if (isNullOrEmpty() || chunkSize <= 0) return [];
-    List<List<T>> chunks = [];
+    if (isEmpty || chunkSize <= 0) return [];
+    final chunks = <List<T>>[];
     for (var i = 0; i < length; i += chunkSize) {
       chunks.add(sublist(i, (i + chunkSize > length) ? length : i + chunkSize));
     }
@@ -44,11 +39,6 @@ extension ListExtensions<T> on List<T> {
   /// Removes duplicate elements and returns a new list.
   List<T> distinct() {
     return toSet().toList();
-  }
-
-  /// Removes all null values and returns a new list.
-  List<T> whereNotNull() {
-    return where((element) => element != null).toList();
   }
 
   /// Returns the list shuffled randomly.

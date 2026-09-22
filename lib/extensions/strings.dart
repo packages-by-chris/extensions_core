@@ -60,14 +60,18 @@ extension StringExtensions on String {
 
   /// Shortens the string to a specified length with an optional ellipsis.
   String truncate(int maxLength, {String ellipsis = '...'}) {
+    if (maxLength <= 0) return ellipsis;
     if (length <= maxLength) return this;
     return '${substring(0, maxLength)}$ellipsis';
   }
 
-  /// Converts the string to Title Case.
+  /// Converts the string to Title Case (whitespace-separated words).
   String toTitleCase() {
     if (isEmpty) return this;
-    return split(' ').map((word) => word.capitalize()).join(' ');
+    return collapseWhitespace()
+        .split(' ')
+        .map((word) => word.capitalize())
+        .join(' ');
   }
 
   /// Checks if the string contains only alphabetic characters.
