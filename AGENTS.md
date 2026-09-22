@@ -43,4 +43,4 @@ Run `flutter analyze` and `flutter test` before every commit; they are the only 
 
 1. Bump `version:` in `pubspec.yaml` + add a `CHANGELOG.md` head entry with Added/Changed/Fixed/Tests sections.
 2. Commit with the repo's style: `vX.Y.Z - summary` (see `git log`). At `0.1.x`, additions ship as patch bumps; breaking changes as minor.
-3. PR → push to `origin` (github.com/LeanQChris/extensions.git). Run `dart pub publish --dry-run` first.
+3. PR → push to `origin` (github.com/packages-by-chris/extensions_core). Run `dart pub publish --dry-run` first.
