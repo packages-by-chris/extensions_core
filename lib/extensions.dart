@@ -23,5 +23,7 @@ export './extensions/state.dart';
 export './extensions/platform.dart';
 export './extensions/object.dart';
 export './extensions/duration.dart';
-export './extensions/edge_insets.dart';
 export './extensions/form_validators.dart';
+export './extensions/uri.dart';
+export './extensions/bool.dart';
+export './extensions/controllers.dart';

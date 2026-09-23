@@ -177,4 +177,25 @@ extension WidgetExtension on Widget {
       child: this,
     );
   }
+
+  /// Reacts to the pointer entering (`true`) or leaving (`false`).
+  Widget onHover(void Function(bool isHovered) onHover) {
+    return MouseRegion(
+      onEnter: (_) => onHover(true),
+      onExit: (_) => onHover(false),
+      child: this,
+    );
+  }
+
+  /// Reacts to focus changes: `true` gains focus, `false` loses it.
+  Widget onFocusChange(
+    void Function(bool hasFocus) onChange, {
+    FocusNode? focusNode,
+  }) {
+    return Focus(focusNode: focusNode, onFocusChange: onChange, child: this);
+  }
+
+  /// Prevents interaction (and hit-testing) when [disabled] is `true`.
+  Widget disabled(bool disabled) =>
+      IgnorePointer(ignoring: disabled, child: this);
 }

@@ -72,6 +72,63 @@ extension IterableExtensions<T> on Iterable<T> {
     }
     return result;
   }
+
+  /// Element with the smallest [selector] value.
+  ///
+  /// Throws [StateError] when the iterable is empty.
+  T minBy<R extends Comparable>(R Function(T) selector) {
+    if (isEmpty) throw StateError('minBy called on empty iterable');
+    var best = first;
+    var bestKey = selector(best);
+    for (final element in this) {
+      final key = selector(element);
+      if (key.compareTo(bestKey) < 0) {
+        best = element;
+        bestKey = key;
+      }
+    }
+    return best;
+  }
+
+  /// Element with the largest [selector] value.
+  ///
+  /// Throws [StateError] when the iterable is empty.
+  T maxBy<R extends Comparable>(R Function(T) selector) {
+    if (isEmpty) throw StateError('maxBy called on empty iterable');
+    var best = first;
+    var bestKey = selector(best);
+    for (final element in this) {
+      final key = selector(element);
+      if (key.compareTo(bestKey) > 0) {
+        best = element;
+        bestKey = key;
+      }
+    }
+    return best;
+  }
+
+  /// Number of occurrences of each element.
+  Map<T, int> frequency() {
+    final map = <T, int>{};
+    for (final element in this) {
+      map[element] = (map[element] ?? 0) + 1;
+    }
+    return map;
+  }
+
+  /// Whether no element matches [test].
+  bool none(bool Function(T) test) => !any(test);
+
+  /// All distinct elements of this iterable and [other].
+  List<T> union(Iterable<T> other) => <T>{...this, ...other}.toList();
+
+  /// Distinct elements present in both this iterable and [other].
+  List<T> intersection(Iterable<T> other) =>
+      toSet().intersection(other.toSet()).toList();
+
+  /// Distinct elements of this iterable that are not in [other].
+  List<T> difference(Iterable<T> other) =>
+      toSet().difference(other.toSet()).toList();
 }
 
 /// Numeric aggregates (`sum`, `min`, `max`, `average`).

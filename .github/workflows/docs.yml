@@ -31,10 +31,10 @@ jobs:
       - name: Build API docs
         run: dart doc
 
-      # Enables Pages (source: GitHub Actions) if it is not already configured.
+      # Reads the Pages configuration. It does NOT enable Pages — the
+      # workflow token cannot create a Pages site ("Resource not accessible by
+      # integration"); enable it once in Settings → Pages (source: GitHub Actions).
       - uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - uses: actions/upload-pages-artifact@v5
         with:

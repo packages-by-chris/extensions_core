@@ -166,4 +166,19 @@ extension DateTimeExtensions on DateTime {
     if (ref.month < month || (ref.month == month && ref.day < day)) age--;
     return age;
   }
+
+  /// Weekday name (e.g. `Monday`).
+  String get weekdayName => DateFormat('EEEE').format(this);
+
+  /// Abbreviated weekday name (e.g. `Mon`).
+  String get weekdayShortName => DateFormat('EEE').format(this);
+
+  /// Month name (e.g. `January`).
+  String get monthName => DateFormat('MMMM').format(this);
+
+  /// Abbreviated month name (e.g. `Jan`).
+  String get monthShortName => DateFormat('MMM').format(this);
+
+  /// Number of days in the month (28-31).
+  int get daysInMonth => DateTime(year, month + 1, 0).day;
 }

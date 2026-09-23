@@ -1,3 +1,26 @@
+## 0.2.0
+
+### Added
+
+- `Uri` extensions: `isHttp` / `isHttps` / `isWeb`, `domain`, `pathLastSegment`,
+  `withQueryParam`, `withoutQueryParams`.
+- `bool` extensions: `toInt`, `toggle`, `toYesNo`.
+- `Iterable`: `minBy`, `maxBy`, `frequency`, `none`, `union`, `intersection`,
+  `difference`.
+- `DateTime`: `weekdayName`, `weekdayShortName`, `monthName`, `monthShortName`,
+  `daysInMonth`.
+- `Duration`: `isLongerThan`, `isShorterThan`.
+- `TextEditingController`: `selectAll`, `cursorToEnd`.
+- `ScrollController`: `scrollToTop`, `scrollToBottom`, `jumpToTop`,
+  `jumpToBottom`.
+- `Widget`: `onHover`, `onFocusChange`, `disabled`.
+
+### Removed
+
+- `EdgeInsets.copyWith` extension: dead code, shadowed by the framework's native
+  `EdgeInsets.copyWith` (identical semantics), so it could never be called. Use
+  the framework API directly.
+
 ## 0.1.0
 
 ### Fixed

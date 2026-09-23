@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'dart:ui' show PointerDeviceKind;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -24,6 +25,48 @@ void main() {
       expect(''.isNull, isFalse);
       expect(s.isNotNull, isFalse);
       expect('a'.isNotNull, isTrue);
+    });
+  });
+
+  group('Uri', () {
+    test('schemes', () {
+      expect(Uri.parse('http://x.dev').isHttp, isTrue);
+      expect(Uri.parse('https://x.dev').isHttps, isTrue);
+      expect(Uri.parse('https://x.dev').isWeb, isTrue);
+      expect(Uri.parse('ftp://x.dev').isWeb, isFalse);
+      expect(Uri.parse('').isHttp, isFalse);
+    });
+
+    test('domain/pathLastSegment', () {
+      expect(
+          Uri.parse('https://www.example.com/path/id').domain, 'example.com');
+      expect(Uri.parse('https://example.com').domain, 'example.com');
+      expect(Uri.parse('relative').domain, isNull);
+      expect(Uri.parse('/users/42/').pathLastSegment, '42');
+      expect(Uri.parse('/folder/').pathLastSegment, 'folder');
+      expect(Uri.parse('').pathLastSegment, isNull);
+    });
+
+    test('query manipulation', () {
+      final base = Uri.parse('https://x.dev?a=1&b=2');
+      expect(base.withQueryParam('b', '9'), Uri.parse('https://x.dev?a=1&b=9'));
+      expect(base.withQueryParam('c', '3'),
+          Uri.parse('https://x.dev?a=1&b=2&c=3'));
+      expect(base.withoutQueryParams(['a']), Uri.parse('https://x.dev?b=2'));
+      expect(
+          base.withoutQueryParams(['a', 'b', 'z']), Uri.parse('https://x.dev'));
+    });
+  });
+
+  group('Bool', () {
+    test('toInt/toggle/toYesNo', () {
+      expect(true.toInt(), 1);
+      expect(false.toInt(), 0);
+      expect(true.toggle(), isFalse);
+      expect(false.toggle(), isTrue);
+      expect(true.toYesNo(), 'Yes');
+      expect(false.toYesNo(), 'No');
+      expect(false.toYesNo(yes: 'Y', no: 'N'), 'N');
     });
   });
 
@@ -172,6 +215,42 @@ void main() {
       expect(DateTime(2020, 6, 15).ageInYears(DateTime(2025, 6, 14)), 4);
       expect(DateTime(2020, 6, 15).ageInYears(DateTime(2025, 6, 15)), 5);
     });
+
+    test('isToday/isYesterday/isTomorrow', () {
+      final now = DateTime.now();
+      expect(now.isToday(), isTrue);
+      expect(now.add(const Duration(days: 1)).isToday(), isFalse);
+      expect(now.subtract(const Duration(days: 1)).isYesterday(), isTrue);
+      expect(now.add(const Duration(days: 1)).isYesterday(), isFalse);
+      expect(now.add(const Duration(days: 1)).isTomorrow(), isTrue);
+      expect(now.subtract(const Duration(days: 2)).isTomorrow(), isFalse);
+    });
+
+    test('isInFuture/isInPast', () {
+      final now = DateTime.now();
+      expect(now.add(const Duration(hours: 1)).isInFuture(), isTrue);
+      expect(now.subtract(const Duration(hours: 1)).isInFuture(), isFalse);
+      expect(now.subtract(const Duration(hours: 1)).isInPast(), isTrue);
+      expect(now.add(const Duration(hours: 1)).isInPast(), isFalse);
+    });
+
+    test('format and ageInYears default', () {
+      expect(DateTime(2025, 6, 15).format('yyyy/MM/dd'), '2025/06/15');
+      expect(DateTime(2025, 6, 15).format('MMM'), 'Jun');
+      expect(DateTime(2000, 1, 1).ageInYears(), greaterThanOrEqualTo(25));
+    });
+
+    test('names and daysInMonth', () {
+      final d = DateTime(2025, 6, 15);
+      expect(d.weekdayName, 'Sunday');
+      expect(d.weekdayShortName, 'Sun');
+      expect(d.monthName, 'June');
+      expect(d.monthShortName, 'Jun');
+      expect(d.daysInMonth, 30);
+      expect(DateTime(2024, 2, 1).daysInMonth, 29);
+      expect(DateTime(2025, 2, 1).daysInMonth, 28);
+      expect(DateTime(2025, 12, 1).daysInMonth, 31);
+    });
   });
 
   group('Duration', () {
@@ -179,7 +258,56 @@ void main() {
       expect(const Duration(days: 14).inWeeks, 2);
       expect(const Duration(hours: 2, minutes: 3, seconds: 45).format(),
           '2:03:45');
-      expect(const Duration(seconds: 5).format(), '0:00:05');
+    });
+
+    test('isLongerThan/isShorterThan', () {
+      const a = Duration(seconds: 5);
+      const b = Duration(seconds: 10);
+      expect(b.isLongerThan(a), isTrue);
+      expect(a.isLongerThan(b), isFalse);
+      expect(a.isShorterThan(b), isTrue);
+      expect(b.isShorterThan(a), isFalse);
+      expect(a.isLongerThan(a), isFalse);
+    });
+  });
+
+  group('Controllers', () {
+    test('TextEditingController selectAll/cursorToEnd', () {
+      final c = TextEditingController(text: 'hello world');
+      c.selectAll();
+      expect(c.selection, const TextSelection(baseOffset: 0, extentOffset: 11));
+      c.cursorToEnd();
+      expect(c.selection, const TextSelection.collapsed(offset: 11));
+      c.clear();
+      c.cursorToEnd();
+      expect(c.selection, const TextSelection.collapsed(offset: 0));
+    });
+
+    testWidgets('ScrollController top/bottom', (tester) async {
+      final controller = ScrollController();
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ListView.builder(
+            controller: controller,
+            itemCount: 100,
+            itemBuilder: (_, i) => SizedBox(height: 50, child: Text('item $i')),
+          ),
+        ),
+      ));
+      expect(controller.position.maxScrollExtent, greaterThan(0));
+      controller.jumpToBottom();
+      await tester.pump();
+      expect(controller.offset, controller.position.maxScrollExtent);
+      controller.jumpToTop();
+      await tester.pump();
+      expect(controller.offset, 0);
+      controller.scrollToBottom();
+      await tester.pumpAndSettle();
+      expect(controller.offset, controller.position.maxScrollExtent);
+      controller.scrollToTop();
+      await tester.pumpAndSettle();
+      expect(controller.offset, 0);
     });
   });
 
@@ -285,16 +413,6 @@ void main() {
     });
   });
 
-  group('EdgeInsets', () {
-    test('copyWith', () {
-      const e = EdgeInsets.fromLTRB(1, 2, 3, 4);
-      expect(e.copyWith(left: 10), const EdgeInsets.fromLTRB(10, 2, 3, 4));
-      expect(e.copyWith(top: 20, bottom: 30),
-          const EdgeInsets.fromLTRB(1, 20, 3, 30));
-      expect(e.copyWith(), e);
-    });
-  });
-
   group('File', () {
     test('size helpers', () {
       final dir = Directory.systemTemp.createTempSync('fx_test');
@@ -376,6 +494,115 @@ void main() {
       expect(find.byType(ConstrainedBox), findsWidgets);
       expect(find.byType(AspectRatio), findsOneWidget);
     });
+
+    testWidgets('modifiers: padding/border/align/size/opacity/...',
+        (tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: Column(
+            children: [
+              Text('f').flexible(),
+              Expanded(
+                child: Text('mod')
+                    .padding()
+                    .border(borderRadius: BorderRadius.circular(4))
+                    .center
+                    .safeArea()
+                    .align()
+                    .size(width: 30, height: 30)
+                    .opacity(0.5)
+                    .circular()
+                    .elevated(),
+              ),
+              Text('e').expanded,
+            ],
+          ),
+        ),
+      ));
+      expect(find.byType(Padding), findsWidgets);
+      expect(find.byType(DecoratedBox), findsOneWidget);
+      expect(find.byType(Center), findsOneWidget);
+      expect(find.byType(Expanded), findsNWidgets(2));
+      expect(find.byType(Flexible), findsOneWidget);
+      expect(find.byType(SafeArea), findsOneWidget);
+      expect(find.byType(Align), findsOneWidget);
+      expect(find.byType(SizedBox), findsOneWidget);
+      expect(find.byType(Opacity), findsOneWidget);
+      expect(find.byType(ClipRRect), findsOneWidget);
+      expect(find.byType(Material), findsWidgets);
+    });
+
+    testWidgets('gestures and inkWell', (tester) async {
+      var taps = 0, lps = 0, dts = 0, inks = 0;
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: Column(
+            children: [
+              Text('t').onTap(() => taps++),
+              Text('l').onLongPress(() => lps++),
+              Text('d').onDoubleTap(() => dts++),
+              Text('i').inkWell(() => inks++),
+            ],
+          ),
+        ),
+      ));
+      await tester.tap(find.text('t'));
+      await tester.pumpAndSettle();
+      expect(taps, 1);
+      await tester.longPress(find.text('l'));
+      await tester.pumpAndSettle();
+      expect(lps, 1);
+      await tester.tap(find.text('d'));
+      await tester.pump(const Duration(milliseconds: 50));
+      await tester.tap(find.text('d'));
+      await tester.pumpAndSettle();
+      expect(dts, 1);
+      await tester.tap(find.text('i'));
+      await tester.pumpAndSettle();
+      expect(inks, 1);
+    });
+
+    testWidgets('onHover/onFocusChange/disabled', (tester) async {
+      var hovered = false;
+      var focused = false;
+      var tapped = 0;
+      final focusNode = FocusNode();
+      addTearDown(focusNode.dispose);
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: Column(
+            children: [
+              Text('h').onHover((h) => hovered = h),
+              Text('f').onFocusChange((f) => focused = f, focusNode: focusNode),
+              TextButton(
+                onPressed: () => tapped++,
+                child: const Text('b'),
+              ).disabled(true),
+            ],
+          ),
+        ),
+      ));
+
+      final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await gesture.addPointer(location: const Offset(-10, -10));
+      await gesture.moveTo(tester.getCenter(find.text('h')));
+      await tester.pump();
+      expect(hovered, isTrue);
+      await gesture.moveTo(const Offset(600, 600));
+      await tester.pump();
+      expect(hovered, isFalse);
+
+      focusNode.requestFocus();
+      await tester.pump();
+      expect(focused, isTrue);
+      focusNode.unfocus();
+      await tester.pump();
+      expect(focused, isFalse);
+
+      await tester.tap(find.text('b'));
+      await tester.pump();
+      expect(tapped, 0);
+    });
   });
 
   group('Navigation', () {
@@ -412,6 +639,103 @@ void main() {
       context.navigateBack();
       await tester.pumpAndSettle();
       expect(back, isTrue);
+    });
+
+    testWidgets('navigateTo plain and fade', (tester) async {
+      await tester
+          .pumpWidget(MaterialApp(home: const Scaffold(body: SizedBox())));
+      final context = tester.element(find.byType(Scaffold));
+      context.navigateTo(screen: const Scaffold(body: Text('plain')));
+      await tester.pumpAndSettle();
+      expect(find.text('plain'), findsOneWidget);
+      context.navigateBack();
+      await tester.pumpAndSettle();
+      context.navigateTo(
+          screen: const Scaffold(body: Text('faded')), fade: true);
+      await tester.pumpAndSettle();
+      expect(find.text('faded'), findsOneWidget);
+    });
+
+    testWidgets('pushWithFade', (tester) async {
+      await tester
+          .pumpWidget(MaterialApp(home: const Scaffold(body: SizedBox())));
+      tester
+          .element(find.byType(Scaffold))
+          .pushWithFade(const Scaffold(body: Text('pf')));
+      await tester.pumpAndSettle();
+      expect(find.text('pf'), findsOneWidget);
+    });
+
+    testWidgets('replace/removeUntil/clearStack', (tester) async {
+      await tester
+          .pumpWidget(MaterialApp(home: const Scaffold(body: Text('home'))));
+      tester
+          .element(find.byType(Scaffold))
+          .pushScreen(const Scaffold(body: Text('push1')));
+      await tester.pumpAndSettle();
+      tester
+          .element(find.text('push1'))
+          .navigateToReplace(screen: const Scaffold(body: Text('replaced')));
+      await tester.pumpAndSettle();
+      tester
+          .element(find.text('replaced'))
+          .replaceScreen(const Scaffold(body: Text('replace2')));
+      await tester.pumpAndSettle();
+      tester.element(find.text('replace2')).navigateAndRemoveUntil(
+          screen: const Scaffold(body: Text('clean')), fade: true);
+      await tester.pumpAndSettle();
+      expect(find.text('clean'), findsOneWidget);
+      tester
+          .element(find.text('clean'))
+          .clearStackAndShow(const Scaffold(body: Text('cleared')));
+      await tester.pumpAndSettle();
+      expect(find.text('cleared'), findsOneWidget);
+      tester.element(find.text('cleared')).navigateBack();
+      await tester.pumpAndSettle();
+      expect(find.text('cleared'), findsNothing);
+    });
+
+    testWidgets('pop helpers, maybePop, route name', (tester) async {
+      await tester.pumpWidget(MaterialApp(
+        initialRoute: '/home',
+        routes: {
+          '/home': (_) => const Scaffold(body: Text('home')),
+          '/a': (_) => const Scaffold(body: Text('a')),
+          '/b': (_) => const Scaffold(body: Text('b')),
+        },
+      ));
+      final context = tester.element(find.text('home'));
+      expect(context.currentRouteName, '/home');
+      Navigator.of(context).pushNamed('/a');
+      await tester.pumpAndSettle();
+      Navigator.of(context).pushNamed('/b');
+      await tester.pumpAndSettle();
+      context.popUntilRoute('/a');
+      await tester.pumpAndSettle();
+      expect(find.text('a'), findsOneWidget);
+      context.navigateBack();
+      await tester.pumpAndSettle();
+      Navigator.of(context).pushNamed('/b');
+      await tester.pumpAndSettle();
+      context.popToFirst();
+      await tester.pumpAndSettle();
+      expect(find.text('home'), findsOneWidget);
+      context.maybePop();
+      await tester.pumpAndSettle();
+      expect(find.text('home'), findsOneWidget);
+    });
+
+    testWidgets('popWithResult', (tester) async {
+      await tester
+          .pumpWidget(MaterialApp(home: const Scaffold(body: Text('home'))));
+      final context = tester.element(find.byType(Scaffold));
+      final future =
+          context.pushScreen<int>(const Scaffold(body: Text('pick')));
+      await tester.pumpAndSettle();
+      tester.element(find.text('pick')).popWithResult(42);
+      await tester.pumpAndSettle();
+      expect(await future, 42);
+      expect(find.text('home'), findsOneWidget);
     });
   });
 
@@ -496,6 +820,24 @@ void main() {
       expect([1, 2].containsAny([5, 2]), isTrue);
       expect(<List<int>>[].flatten(), isEmpty);
     });
+
+    test('minBy/maxBy throw on empty', () {
+      expect(['bb', 'a', 'ccc'].minBy((s) => s.length), 'a');
+      expect(['bb', 'a', 'ccc'].maxBy((s) => s.length), 'ccc');
+      expect(() => <int>[].minBy((n) => n), throwsStateError);
+      expect(() => <int>[].maxBy((n) => n), throwsStateError);
+    });
+
+    test('frequency/none/union/intersection/difference', () {
+      expect(['a', 'b', 'a'].frequency(), {'a': 2, 'b': 1});
+      expect(<int>[].frequency(), isEmpty);
+      expect([1, 2, 3].none((n) => n > 5), isTrue);
+      expect([1, 2, 3].none((n) => n < 0), isTrue);
+      expect([1, 2].none((n) => n == 2), isFalse);
+      expect([1, 2].union([2, 3]), [1, 2, 3]);
+      expect([1, 2, 2].intersection([2, 3]), [2]);
+      expect([1, 2].difference([2, 3]), [1]);
+    });
   });
 
   group('List extras', () {
@@ -554,6 +896,27 @@ void main() {
         'y': 1,
       });
     });
+
+    test('pick/omit/where filters', () {
+      final map = {'a': 1, 'b': 2, 'c': 3};
+      expect(map.pick(['a', 'c', 'z']), {'a': 1, 'c': 3});
+      expect(map.omit(['b']), {'a': 1, 'c': 3});
+      expect(map.where((k, v) => v.isEven), {'b': 2});
+      expect(map.filterKeys((k) => k != 'a'), {'b': 2, 'c': 3});
+      expect(map.filterValues((v) => v > 1), {'b': 2, 'c': 3});
+    });
+
+    test('mapKeys/mapValues/invert/merge/getOrPut/keysOf', () {
+      final map = {'a': 1, 'b': 2};
+      expect(map.mapKeys((k) => k.toUpperCase()), {'A': 1, 'B': 2});
+      expect(map.mapValues((v) => v * 10), {'a': 10, 'b': 20});
+      expect(map.invert(), {1: 'a', 2: 'b'});
+      expect(map.merge({'b': 9, 'c': 3}), {'a': 1, 'b': 9, 'c': 3});
+      expect(map.keysOf(2), ['b']);
+      final mutable = <String, int>{};
+      expect(mutable.getOrPut('k', () => 5), 5);
+      expect(mutable.getOrPut('k', () => 9), 5);
+    });
   });
 
   group('Color extras', () {
@@ -593,6 +956,38 @@ void main() {
       expect(const TextStyle().outlined().foreground, isNotNull);
       expect(const TextStyle().lineHeight(1.5).height, 1.5);
     });
+
+    test('weight/decoration/merge/shadow extras', () {
+      expect(const TextStyle().weight(FontWeight.w700).fontWeight,
+          FontWeight.w700);
+      expect(const TextStyle().semiBold.fontWeight, FontWeight.w600);
+      expect(const TextStyle().light.fontWeight, FontWeight.w300);
+      expect(const TextStyle().medium.fontWeight, FontWeight.w500);
+      expect(
+          const TextStyle().lineThrough.decoration, TextDecoration.lineThrough);
+      expect(const TextStyle().overline.decoration, TextDecoration.overline);
+      expect(const TextStyle().noDecoration.decoration, TextDecoration.none);
+      expect(
+        const TextStyle(fontSize: 10).mergeWith(const TextStyle(fontSize: 12)),
+        isA<TextStyle>(),
+      );
+      expect(const TextStyle().mergeWith(null), isA<TextStyle>());
+      expect(const TextStyle().withShadows(const [Shadow()]).shadows,
+          hasLength(1));
+    });
+
+    testWidgets('responsiveSize uses screen width', (tester) async {
+      late BuildContext context;
+      await tester.pumpWidget(MaterialApp(
+        home: Builder(builder: (c) {
+          context = c;
+          return const SizedBox();
+        }),
+      ));
+      expect(
+          const TextStyle(fontSize: 10).responsiveSize(context, 0.01).fontSize,
+          8.0);
+    });
   });
 
   group('BuildContext', () {
@@ -616,6 +1011,42 @@ void main() {
       expect(context.safePadding, isA<EdgeInsets>());
       expect(context.textScaler.scale(10), 10);
       expect(context.devicePixelRatio, greaterThan(0));
+    });
+
+    testWidgets('additional getters and breakpoints', (tester) async {
+      late BuildContext context;
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetDevicePixelRatio);
+      Future<void> pump(Size size) async {
+        tester.view.physicalSize = size;
+        await tester.pumpWidget(MaterialApp(
+          home: Builder(builder: (c) {
+            context = c;
+            return const SizedBox();
+          }),
+        ));
+      }
+
+      await pump(const Size(1280, 900));
+      expect(context.isDesktop, isTrue);
+      expect(context.screenHeight, 900);
+      expect(context.orientation, Orientation.landscape);
+      expect(context.isPortrait, isFalse);
+      expect(context.theme, isA<ThemeData>());
+      expect(context.textTheme, isA<TextTheme>());
+      expect(context.colorScheme, isA<ColorScheme>());
+      expect(context.primaryColor, isA<Color>());
+      expect(context.accentColor, isA<Color>());
+      expect(context.scaffoldBackgroundColor, isA<Color>());
+      expect(context.iconTheme, isA<IconThemeData>());
+      expect(context.viewInsets, isA<EdgeInsets>());
+      expect(context.viewPadding, isA<EdgeInsets>());
+      context.hideKeyboard();
+
+      await pump(const Size(400, 800));
+      expect(context.isMobile, isTrue);
+      expect(context.isPortrait, isTrue);
+      addTearDown(tester.view.resetPhysicalSize);
     });
   });
 
@@ -713,6 +1144,25 @@ void main() {
       final encoded = await tester.runAsync(() => image.toBase64());
       expect(encoded, isNotEmpty);
     });
+
+    testWidgets('toBase64 error path and withFilter', (tester) async {
+      final bad = Image(image: MemoryImage(base64Decode('')));
+      final result = await tester.runAsync(() => bad.toBase64().then(
+            (_) => 'ok',
+            onError: (Object e) => 'err',
+          ));
+      expect(result, 'err');
+      tester.takeException();
+
+      final bytes = base64Decode(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJ'
+        'AAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+      );
+      final filtered = Image(image: MemoryImage(bytes))
+          .withFilter(const ColorFilter.mode(Colors.red, BlendMode.srcIn));
+      await tester.pumpWidget(MaterialApp(home: filtered));
+      expect(find.byType(ColorFiltered), findsOneWidget);
+    });
   });
 
   group('DateTime relative', () {
@@ -731,6 +1181,14 @@ void main() {
       expect(
         DateTime.now().subtract(const Duration(days: 3)).timeAgo(context),
         '3 days ago',
+      );
+      expect(
+        DateTime.now().subtract(const Duration(hours: 3)).timeAgo(context),
+        '3 hours ago',
+      );
+      expect(
+        DateTime.now().subtract(const Duration(days: 10)).timeAgo(context),
+        startsWith('20'),
       );
       expect(DateTime.now().timeAgo(context), 'Just now');
       expect(

@@ -32,17 +32,19 @@ widgets, navigation, and more in one place.
   - [Double](#double)
   - [DateTime](#datetime)
   - [Duration](#duration)
+  - [Bool](#bool)
   - [Iterable](#iterable)
   - [List](#list)
   - [Map](#map)
+  - [Uri](#uri)
   - [Color](#color)
   - [BuildContext](#buildcontext)
   - [Widget](#widget)
   - [TextStyle](#textstyle)
   - [Icon](#icon)
   - [Image](#image)
+  - [Controllers](#controllers)
   - [File](#file)
-  - [EdgeInsets](#edgeinsets)
   - [State](#state)
   - [Platform](#platform)
   - [Navigation](#navigation)
@@ -182,7 +184,8 @@ Boundaries: `startOfDay`/`endOfDay` · `startOfWeek`/`endOfWeek` ·
 `startOfMonth`/`endOfMonth` · `startOfYear`/`endOfYear` ·
 `tomorrow` · `yesterday`
 
-Helpers: `copyWith` · `ageInYears` · `quarter`
+Helpers: `copyWith` · `ageInYears` · `quarter` · `weekdayName` ·
+`weekdayShortName` · `monthName` · `monthShortName` · `daysInMonth`
 Formatting: `format` · `formattedDate` · `timeAgo`
 
 ```dart
@@ -194,10 +197,20 @@ now.timeAgo(context);      // "5 minutes ago"
 
 ### Duration
 
-`inWeeks` · `format()`
+`inWeeks` · `format()` · `isLongerThan` · `isShorterThan`
 
 ```dart
 const Duration(hours: 2, minutes: 3, seconds: 45).format(); // 2:03:45
+const Duration(seconds: 5).isShorterThan(const Duration(seconds: 10)); // true
+```
+
+### Bool
+
+`toInt()` · `toggle()` · `toYesNo({yes, no})`
+
+```dart
+true.toInt();       // 1
+false.toYesNo();    // "No"
 ```
 
 ### Iterable
@@ -209,9 +222,18 @@ Nullable: `isNullOrEmpty` (on `Iterable<T>?`) · `whereNotNull` (on
 `Iterable<T?>`, narrows to `List<T>`)
 
 Math (`Iterable<num>`): `sum` · `min` · `max` · `average`; plus `sumBy` ·
-`averageBy`
+`averageBy` · `minBy` · `maxBy`
 
-Grouping/joining: `groupBy` · `insertBetween` · `zip` · `unzip` · `flatten`
+Grouping/joining: `groupBy` · `frequency` · `insertBetween` · `zip` · `unzip` ·
+`flatten`
+
+Set-like: `union` · `intersection` · `difference` · `none`
+
+```dart
+['a', 'b', 'a'].frequency();      // {a: 2, b: 1}
+[1, 2].union([2, 3]);             // [1, 2, 3]
+['bb', 'a'].minBy((s) => s.length); // 'a'
+```
 
 ### List
 
@@ -233,6 +255,16 @@ Grouping/joining: `groupBy` · `insertBetween` · `zip` · `unzip` · `flatten`
 ```dart
 {'a': 1, 'b': 2}.invert();               // {1: a, 2: b}
 {'a': 1, 'b': 2, 'c': 3}.pick(['a', 'c']); // {a: 1, c: 3}
+```
+
+### Uri
+
+`isHttp` · `isHttps` · `isWeb` · `domain` · `pathLastSegment` ·
+`withQueryParam(name, value)` · `withoutQueryParams(names)`
+
+```dart
+Uri.parse('https://www.example.com/a?id=1')
+    .withQueryParam('b', '2'); // https://www.example.com/a?id=1&b=2
 ```
 
 ### Color
@@ -271,7 +303,8 @@ Layout: `padding` · `margin` · `background` · `border` · `center` ·
 `expanded` · `flexible` · `align` · `size` · `width` · `height` ·
 `constrained` · `aspectRatio`
 
-Interaction: `onTap` · `onLongPress` · `onDoubleTap` · `inkWell` · `tooltip`
+Interaction: `onTap` · `onLongPress` · `onDoubleTap` · `inkWell` · `tooltip` ·
+`onHover` · `onFocusChange` · `disabled`
 
 Effect: `opacity` · `visible` · `safeArea` · `circular` · `elevated` ·
 `blur` · `rotated` · `scaled`
@@ -279,6 +312,7 @@ Effect: `opacity` · `visible` · `safeArea` · `circular` · `elevated` ·
 ```dart
 Text('Hello').padding().background(Colors.red).tooltip('hi');
 Text('Tap').inkWell(onTap);
+Text('Hi').onHover((h) => print(h));   // listens to pointer enter/leave
 ```
 
 ### TextStyle
@@ -301,6 +335,18 @@ TextStyle().bold.color(Colors.red).size(24);
 
 `toBase64()` · `withFilter(ColorFilter)`
 
+### Controllers
+
+Text: `selectAll()` · `cursorToEnd()` (on `TextEditingController`)
+
+Scroll (`ScrollController`): `scrollToTop` · `scrollToBottom` · `jumpToTop` ·
+`jumpToBottom`
+
+```dart
+scrollController.scrollToBottom();   // animated
+textController.selectAll();
+```
+
 ### File
 
 `sizeBytes` · `sizeFormatted` · `sizeInMB` · `isImage` · `isVideo` ·
@@ -312,10 +358,6 @@ Only available where `dart:io` exists (not on the web).
 File('photo.jpg').isImage;   // true
 file.sizeFormatted();        // "1.23 MB"
 ```
-
-### EdgeInsets
-
-`copyWith({left, top, right, bottom})` — Flutter's `EdgeInsets` has none.
 
 ### State
 
